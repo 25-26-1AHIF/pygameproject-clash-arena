@@ -1,4 +1,5 @@
 import pygame
+from clash_arena.src.screen_variables.screen_variables import ScreenVariables
 
 class Ninja:
     def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage):
@@ -28,6 +29,10 @@ class Ninja:
         self.blocking = False
 
         self.jumping = False
+
+        self.SV = ScreenVariables
+
+        self.jump_counter = 0
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -65,6 +70,13 @@ class Ninja:
             else:
                 self.blocking = False
 
+            if pressed_keys[pygame.K_w]:
+                if self.jumping == True:
+                    pass
+
+                else:
+                    self.jumping = True
+
 
         elif self.player_type == 2:
             if pressed_keys[pygame.K_j]:
@@ -86,6 +98,13 @@ class Ninja:
                     pass
                 else:
                     self.punch_dict['thrown'] = True
+
+            if pressed_keys[pygame.K_i]:
+                if self.jumping == True:
+                    pass
+
+                else:
+                    self.jumping = True
 
 
     def punch(self):
@@ -112,11 +131,11 @@ class Ninja:
 
             if self.skip_next_punch == False:
 
-                if enemy.punch_dict['xpos'] <= self.xpos <= enemy.punch_dict['xpos'] + enemy.punch_dict['range']:
+                if enemy.punch_dict['xpos'] <= self.xpos <= enemy.punch_dict['xpos'] + enemy.punch_dict['range'] and enemy.punch_dict['ypos'] <= self.ypos:
                     self.hp -= enemy.damage
                     self.skip_next_punch = True
 
-                if enemy.punch_dict['xpos'] <= self.xpos + self.size <= enemy.xpos:
+                if enemy.punch_dict['xpos'] <= self.xpos + self.size <= enemy.xpos and enemy.punch_dict['ypos'] <= self.ypos:
 
                     if self.blocking == True:
                         pass
@@ -145,6 +164,19 @@ class Ninja:
         else:
             return False
 
+    def jump(self):
+        if self.jump_counter > 90:
+            self.jumping = False
+            self.jump_counter = 0
+            self.ypos = self.screenheight - self.size
+
+        elif 0 <= self.jump_counter <= 45:
+            self.ypos -= 3
+
+        elif self.jump_counter > 45:
+            self.ypos += 3
+
+
 
     def update_and_draw(self):
         self.inputs()
@@ -155,3 +187,9 @@ class Ninja:
             pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.ypos + self.size / 4, self.punch_dict['range'], 32), color="blue")
 
         self.draw_healthbar()
+
+        if self.jumping == True:
+            self.jump()
+            self.jump_counter += 1
+
+

@@ -24,6 +24,7 @@ def play_screen(clock, screen, FPS, player_1, player_2):
                 running = False
 
 
+
         screen.fill("black")
 
         # Das Display updaten

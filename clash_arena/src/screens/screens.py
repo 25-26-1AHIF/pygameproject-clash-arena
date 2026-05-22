@@ -181,10 +181,13 @@ class Screens:
     def steuerung(self):
 
         text = self.SV.FONT_BIG.render("Spieler 1", True, "dark blue")
-        text_rect = text.get_rect(center=(self.screenwidth / 2, 50))
+        text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
 
         text2 = self.SV.FONT_BIG.render("Spieler 2", True, "dark blue")
-        text2_rect = text.get_rect(center=(self.screenwidth / 2, self.screenheight / 2))
+        text2_rect = text.get_rect(center=(self.screenwidth / 2, 200))
+
+        zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 350))
 
         while True:
 
@@ -210,10 +213,19 @@ class Screens:
                     if text_rect.collidepoint(event.pos):
                         self.steuerung_anzeigen(1)
 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if zurueck_rect.collidepoint(event.pos):
+                        return "menü"
+
+
             self.screen.fill("white")
 
             self.screen.blit(source=text, dest=text_rect)
             self.screen.blit(source=text2, dest=text2_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="light blue")
+            self.screen.blit(source=zurueck, dest=zurueck_rect)
 
             pygame.display.flip()
 
@@ -349,3 +361,53 @@ class Screens:
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
 
                     pygame.display.update()
+
+
+    def pausemenu(self):
+        text = self.SV.FONT_BIG.render("Weiterspielen", True, "dark blue")
+        text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
+
+        text2 = self.SV.FONT_BIG.render("Steuerung", True, "dark blue")
+        text2_rect = text.get_rect(center=(self.screenwidth / 2, 375))
+
+        zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 400))
+
+        while True:
+
+            for event in pygame.event.get():
+
+                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
+
+                if event.type == pygame.QUIT:
+                    return "beenden"
+
+                if event.type == pygame.KEYDOWN:
+
+                    if event.type == pygame.K_ESCAPE:
+                        return "beenden"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if text2_rect.collidepoint(event.pos):
+                        self.steuerung()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if text_rect.collidepoint(event.pos):
+                        return "weiter"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if zurueck_rect.collidepoint(event.pos):
+                        return "menü"
+
+            self.screen.fill("white")
+
+            self.screen.blit(source=text, dest=text_rect)
+            self.screen.blit(source=text2, dest=text2_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="light blue")
+            self.screen.blit(source=zurueck, dest=zurueck_rect)
+
+            pygame.display.flip()
