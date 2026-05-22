@@ -2,7 +2,6 @@ import pygame
 
 class Ninja:
     def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage):
-        self.model = pygame.image.load("assets/ninji.png").convert()
         self.screen = screen
         self.screenwidth = screenwidth
         self.screenheight = screenheight
