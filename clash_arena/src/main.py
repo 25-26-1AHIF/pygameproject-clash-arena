@@ -133,8 +133,7 @@ def main(screens, player_1, player_2):
             return
 
         elif next_screen == "steuerung":
-            next_screen = screens.todo()
-            # TODO
+            next_screen = screens.steuerung()
 
         elif next_screen == "laden":
             next_screen = screens.todo()
