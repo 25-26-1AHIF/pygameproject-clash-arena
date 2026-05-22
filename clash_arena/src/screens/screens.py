@@ -254,10 +254,10 @@ class Screens:
                         if event.type == pygame.K_ESCAPE:
                             return
 
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            # klickposition = event.pos (x, y)
-                            if zurueck_text_rect.collidepoint(event.pos):
-                                return
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        # klickposition = event.pos (x, y)
+                        if zurueck_text_rect.collidepoint(event.pos):
+                            return
 
                     self.screen.fill("white")
 
@@ -320,10 +320,10 @@ class Screens:
                         if event.type == pygame.K_ESCAPE:
                             return
 
-                        if event.type == pygame.MOUSEBUTTONDOWN:
-                            # klickposition = event.pos (x, y)
-                            if zurueck_text_rect.collidepoint(event.pos):
-                                return
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        # klickposition = event.pos (x, y)
+                        if zurueck_text_rect.collidepoint(event.pos):
+                            return
 
                     self.screen.fill("white")
 
