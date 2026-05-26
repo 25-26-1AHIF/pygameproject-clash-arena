@@ -364,11 +364,14 @@ class Screens:
 
 
     def pausemenu(self):
+
+        self.SV.init()
+
         text = self.SV.FONT_BIG.render("Weiterspielen", True, "dark blue")
         text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
 
         text2 = self.SV.FONT_BIG.render("Steuerung", True, "dark blue")
-        text2_rect = text.get_rect(center=(self.screenwidth / 2, 375))
+        text2_rect = text.get_rect(center=(self.screenwidth / 2, 275))
 
         zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 400))

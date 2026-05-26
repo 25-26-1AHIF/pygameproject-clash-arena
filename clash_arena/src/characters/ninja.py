@@ -1,8 +1,10 @@
 import pygame
 from clash_arena.src.screen_variables.screen_variables import ScreenVariables
+from clash_arena.src.screens.screens import Screens
+
 
 class Ninja:
-    def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage):
+    def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps, clock):
         self.screen = screen
         self.screenwidth = screenwidth
         self.screenheight = screenheight
@@ -14,25 +16,32 @@ class Ninja:
                             "xpos" : 0,
                             "ypos" : 0}
 
-        self.player_type = player_type
+        self.player_type: int = player_type
 
-        self.xpos = xpos
-        self.ypos = ypos
-        self.size = size
+        self.xpos: float = xpos
+        self.ypos: float = ypos
+        self.size: float = size
         self.last_direction: str = ""
 
-        self.hp = 100
-        self.damage = damage
+        self.hp: int = 100
+        self.damage: int = damage
 
-        self.skip_next_punch = False
+        self.skip_next_punch: bool = False
 
-        self.blocking = False
+        self.blocking: bool = False
 
-        self.jumping = False
+        self.jumping: bool = False
 
         self.SV = ScreenVariables
 
-        self.jump_counter = 0
+        self.jump_counter: int = 0
+
+        self.pause: bool = False
+
+        self.fps = fps
+        self.clock: pygame.time.Clock = clock
+
+        self.screens = Screens(self.fps, self.screen, self.clock, self.SV.width, self.SV.height, self.SV)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -178,7 +187,7 @@ class Ninja:
 
 
 
-    def update_and_draw(self):
+    def update_and_draw(self) -> str|None:
         self.inputs()
         self.punch()
         pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="green", width=1)

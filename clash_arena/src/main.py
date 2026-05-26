@@ -25,12 +25,14 @@ def play_screen(clock, screen, FPS, player_1, player_2):
 
 
 
+
         screen.fill("black")
 
         # Das Display updaten
 
         player_1.update_and_draw()
         player_2.update_and_draw()
+
 
         player_1.check_punch_collision(player_2)
         player_2.check_punch_collision(player_1)
@@ -154,10 +156,10 @@ if __name__ == "__main__":
 
     screens = Screens(FPS, screen, clock, SV.width, SV.height, SV)
 
-    player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 1, 5)
+    player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 1, 5, FPS, clock)
     player_1.ypos -= player_1.size
 
-    player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 2, 5)
+    player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 2, 5, FPS, clock)
     player_2.ypos -= player_2.size
     player_2.change_x_pos()
 
