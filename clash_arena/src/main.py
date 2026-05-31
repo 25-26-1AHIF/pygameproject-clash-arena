@@ -104,6 +104,7 @@ def main(screens, player_1, player_2):
         else:
             next_screen = screens.menu()
 
+
 if __name__ == "__main__":
     SV.init()
     FPS = SV.FPS
@@ -125,6 +126,5 @@ if __name__ == "__main__":
     main(screens, player_1, player_2)
 
     # screens.play_screen(player_1, player_2)
-
 
     pygame.quit()

@@ -1,8 +1,8 @@
 import pygame
 
 class ScreenVariables:
-    width = 1770
-    height = 1000
+    width = 1668
+    height = 943
     FPS = 60
     FONT_BIG: pygame.font.Font = None
     FONT_MIDDLE: pygame.font.Font = None

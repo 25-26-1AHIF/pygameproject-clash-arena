@@ -72,7 +72,9 @@ class Ninja:
         self.special_dict: dict = {'type': "Ninja-Star",
                                    'used': False,
                                    'list' : [],
-                                   'stars-left': 10}
+                                   'stars-left': 10,
+                                   'damage': 5,
+                                   'ignore next': False}
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -84,7 +86,7 @@ class Ninja:
         elif self.player_type == 2:
             self.last_direction = "left"
 
-    def inputs(self, enemy):
+    def inputs(self):
 
         pressed_keys = pygame.key.get_pressed()
         if self.player_type == 1:
@@ -260,7 +262,7 @@ class Ninja:
             stars_text = self.SV.FONT_MIDDLE.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark blue")
 
-            stars_rect = stars_text.get_rect(center=(132, 100))
+            stars_rect = stars_text.get_rect(center=(290, 100))
 
             self.screen.blit(source = stars_text, dest = stars_rect)
 
@@ -269,7 +271,7 @@ class Ninja:
             stars_text = self.SV.FONT_MIDDLE.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark blue")
 
-            stars_rect = stars_text.get_rect(center=(self.screenwidth - 532, 100))
+            stars_rect = stars_text.get_rect(center=(self.screenwidth - 375, 100))
 
             self.screen.blit(source = stars_text, dest = stars_rect)
 
@@ -292,8 +294,25 @@ class Ninja:
         elif self.jump_counter > 50:
             self.ypos += 5
 
+    def check_special_collision(self, special_dict):
+        if special_dict['type'] == "Ninja-Star":
+
+            if len(special_dict['list']) > 0:
+                if self.xpos <= special_dict['list'][0].xpos <= self.xpos + self.size or special_dict['list'][0].xpos <= self.xpos <= special_dict['list'][0].xpos + special_dict['list'][0].size:
+
+                    if self.ypos <= special_dict['list'][0].ypos <= self.ypos + self.size:
+
+                        if self.special_dict['ignore next'] == False:
+                            self.hp -= special_dict['damage']
+
+                            self.special_dict['ignore next'] = True
+
+                else:
+                    self.special_dict['ignore next'] = False
+
+
     def update_and_draw(self, enemy) -> str|None:
-        self.inputs(enemy)
+        self.inputs()
         self.punch()
         pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="red", width=1)
 

@@ -48,8 +48,6 @@ class Screens:
             self.clock.tick(self.FPS)
 
     def draw_menu(self):
-        title_text = self.SV.FONT_BIG.render("Clash Arena", True, "dark blue")
-        title_text_rect = title_text.get_rect(center=(self.screenwidth/2, 50))
 
         neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark blue")
         neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth/2, 125))
@@ -62,8 +60,6 @@ class Screens:
 
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark blue")
         beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
-
-        self.screen.blit(source=title_text, dest=title_text_rect)
 
         pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="light blue")
         self.screen.blit(source=neuer_kampf_text, dest=neuer_kampf_rect)
@@ -82,9 +78,6 @@ class Screens:
 
     def menu(self) -> str:
 
-        title_text = self.SV.FONT_BIG.render("Clash Arena", True, "dark blue")
-        title_text_rect = title_text.get_rect(center=(self.screenwidth / 2, 50))
-
         neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark blue")
         neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 125))
 
@@ -97,7 +90,7 @@ class Screens:
         beenden_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark blue")
         beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
 
-        hintergrund = pygame.image.load("assets/chat_abi.png").convert()
+        hintergrund = pygame.image.load("assets/clash_arena_menu.png").convert()
 
         while True:
 
@@ -140,7 +133,7 @@ class Screens:
 
             self.screen.fill("white")
 
-            self.screen.blit(hintergrund, (0,0))
+            self.screen.blit(hintergrund, (0, 0))
 
             self.draw_menu()
 
@@ -192,6 +185,8 @@ class Screens:
         zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 350))
 
+        hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
+
         while True:
 
             for event in pygame.event.get():
@@ -223,6 +218,9 @@ class Screens:
 
 
             self.screen.fill("white")
+
+            self.screen.blit(source=hintergrund, dest=(0,0))
+
 
             self.screen.blit(source=text, dest=text_rect)
             self.screen.blit(source=text2, dest=text2_rect)
@@ -256,6 +254,8 @@ class Screens:
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark blue")
             zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
 
+            hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
+
             while True:
                 for event in pygame.event.get():
 
@@ -275,6 +275,8 @@ class Screens:
                             return
 
                     self.screen.fill("white")
+
+                    self.screen.blit(source=hintergrund, dest=(0, 0))
 
                     pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="light blue")
                     self.screen.blit(source=springen_text, dest=springen_text_rect)
@@ -322,6 +324,8 @@ class Screens:
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark blue")
             zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
 
+            hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
+
             while True:
                 for event in pygame.event.get():
 
@@ -341,6 +345,9 @@ class Screens:
                             return
 
                     self.screen.fill("white")
+
+                    self.screen.blit(source=hintergrund, dest=(0, 0))
+
 
                     pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="light blue")
                     self.screen.blit(source=springen_text, dest=springen_text_rect)
@@ -362,6 +369,7 @@ class Screens:
 
                     pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="light blue")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
+
 
                     pygame.display.update()
 
@@ -449,6 +457,9 @@ class Screens:
 
             player_1.check_punch_collision(player_2)
             player_2.check_punch_collision(player_1)
+
+            player_1.check_special_collision(player_2.special_dict)
+            player_2.check_special_collision(player_1.special_dict)
 
             if player_1.check_if_dead() == True:
                 return "Player 2"
