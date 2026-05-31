@@ -7,50 +7,6 @@ from screens.screens import Screens
 
 from screen_variables.screen_variables import ScreenVariables as SV
 
-def play_screen(clock, screen, FPS, player_1, player_2):
-    pygame.display.set_caption("Clash Arena")
-
-    running = True
-    # Die Main Loop (Game Loop)
-    while running:
-
-        # Jedes Ereignis (Event) durchgehen
-
-        for event in pygame.event.get():
-
-            # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
-
-            if event.type == pygame.QUIT:
-                running = False
-
-
-
-
-        screen.fill("black")
-
-        # Das Display updaten
-
-        player_1.update_and_draw()
-        player_2.update_and_draw()
-
-
-        player_1.check_punch_collision(player_2)
-        player_2.check_punch_collision(player_1)
-
-        if player_1.check_if_dead() == True:
-            return "Player 2"
-
-        if player_2.check_if_dead() == True:
-            return "Player 1"
-
-        pygame.display.flip()
-
-        # FPS überwachen
-
-        clock.tick(FPS)
-
-    # PyGame sauber beenden (cleanup)
-
 def game_over_screen(clock, FPS, winner, screen):
 
     game_over_text = SV.FONT_BIG.render(f"{winner} gewinnt!", True, "white")
@@ -156,12 +112,14 @@ if __name__ == "__main__":
 
     screens = Screens(FPS, screen, clock, SV.width, SV.height, SV)
 
-    player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 1, 5, FPS, clock)
+    player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
     player_1.ypos -= player_1.size
+    player_1.change_last_direction()
 
-    player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height, 64, 2, 5, FPS, clock)
+    player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
     player_2.ypos -= player_2.size
     player_2.change_x_pos()
+    player_1.change_last_direction()
 
     # menu ist nicht fertig, muss von alex noch gemacht werden
     main(screens, player_1, player_2)

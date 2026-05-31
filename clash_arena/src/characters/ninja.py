@@ -2,6 +2,31 @@ import pygame
 from clash_arena.src.screen_variables.screen_variables import ScreenVariables
 from clash_arena.src.screens.screens import Screens
 
+class Star:
+
+    def __init__(self, xpos, ypos, speed, screen, size, screenwidth):
+        self.xpos = xpos
+        self.ypos = ypos
+        self.speed = speed
+        self.screen = screen
+        self.size = size
+        self.screenwidth = screenwidth
+
+
+    def update_and_draw(self, special_dict):
+
+        self.xpos += self.speed
+
+        pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="blue")
+
+        if self.xpos <= 0 - self.size:
+            special_dict['list'].pop(0)
+            special_dict['used'] = False
+
+        elif self.xpos >= self.screenwidth:
+            special_dict['list'].pop(0)
+            special_dict['used'] = False
+
 
 class Ninja:
     def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps, clock):
@@ -12,9 +37,10 @@ class Ninja:
         self.counter = 0
 
         self.punch_dict: dict = {"thrown" : False,
-                            "range": 32,
+                            "range": 48,
                             "xpos" : 0,
-                            "ypos" : 0}
+                            "ypos" : 0,
+                            "width" : 48}
 
         self.player_type: int = player_type
 
@@ -43,12 +69,22 @@ class Ninja:
 
         self.screens = Screens(self.fps, self.screen, self.clock, self.SV.width, self.SV.height, self.SV)
 
+        self.special_dict: dict = {'type': "Ninja-Star",
+                                   'used': False,
+                                   'list' : [],
+                                   'stars-left': 10}
+
     def change_x_pos(self):
         if self.player_type == 2:
             self.xpos = self.screenwidth - self.size
 
+    def change_last_direction(self):
+        if self.player_type == 1:
+            self.last_direction = "right"
+        elif self.player_type == 2:
+            self.last_direction = "left"
 
-    def inputs(self):
+    def inputs(self, enemy):
 
         pressed_keys = pygame.key.get_pressed()
         if self.player_type == 1:
@@ -86,6 +122,27 @@ class Ninja:
                 else:
                     self.jumping = True
 
+            if pressed_keys[pygame.K_q]:
+
+                if self.special_dict['stars-left'] <= 0:
+                    pass
+
+                elif self.special_dict['used'] == True:
+                    pass
+
+                else:
+                    self.special_dict['used'] = True
+
+                    if self.last_direction == "right":
+                        new_star = Star(xpos = self.xpos + self.size, ypos = self.ypos + self.size / 2, speed = 15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.special_dict['list'].append(new_star)
+
+                    else:
+                        new_star = Star(xpos = self.xpos - self.size, ypos = self.ypos + self.size / 2, speed = -15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.special_dict['list'].append(new_star)
+
+                    self.special_dict['stars-left'] -= 1
+
 
         elif self.player_type == 2:
             if pressed_keys[pygame.K_j]:
@@ -115,6 +172,33 @@ class Ninja:
                 else:
                     self.jumping = True
 
+            if pressed_keys[pygame.K_m]:
+                self.blocking = True
+
+            else:
+                self.blocking = False
+
+            if pressed_keys[pygame.K_u]:
+
+                if self.special_dict['stars-left'] <= 0:
+                    pass
+
+                elif self.special_dict['used'] == True:
+                    pass
+
+                else:
+                    self.special_dict['used'] = True
+
+                    if self.last_direction == "right":
+                        new_star = Star(xpos = self.xpos + self.size, ypos = self.ypos + self.size / 2, speed = 15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.special_dict['list'].append(new_star)
+
+                    else:
+                        new_star = Star(xpos = self.xpos - self.size, ypos = self.ypos + self.size / 2, speed = -15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.special_dict['list'].append(new_star)
+
+                    self.special_dict['stars-left'] -= 1
+
 
     def punch(self):
         if self.punch_dict['thrown'] == True:
@@ -133,6 +217,12 @@ class Ninja:
             self.counter = 0
             self.punch_dict['thrown'] = False
 
+    def special_attack(self):
+        if self.special_dict['used'] == True:
+            self.special_dict['list'][0].update_and_draw(self.special_dict)
+
+        else:
+            pass
 
     def check_punch_collision(self, enemy):
 
@@ -141,12 +231,16 @@ class Ninja:
             if self.skip_next_punch == False:
 
                 if enemy.punch_dict['xpos'] <= self.xpos <= enemy.punch_dict['xpos'] + enemy.punch_dict['range'] and enemy.punch_dict['ypos'] <= self.ypos:
-                    self.hp -= enemy.damage
-                    self.skip_next_punch = True
+
+                    if self.blocking == True and self.last_direction == "left":
+                        pass
+                    else:
+                        self.hp -= enemy.damage
+                        self.skip_next_punch = True
 
                 if enemy.punch_dict['xpos'] <= self.xpos + self.size <= enemy.xpos and enemy.punch_dict['ypos'] <= self.ypos:
 
-                    if self.blocking == True:
+                    if self.blocking == True and self.last_direction == "right":
                         pass
 
                     else:
@@ -158,13 +252,26 @@ class Ninja:
 
 
     def draw_healthbar(self):
-        bar_length = self.hp * 2
+        self.SV.init()
+        bar_length = self.hp * 4
 
         if self.player_type == 1:
-            pygame.draw.rect(surface=self.screen, rect = (32, 32, bar_length, 32), color="red")
+            pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            stars_text = self.SV.FONT_MIDDLE.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
+                                                    "dark blue")
+
+            stars_rect = stars_text.get_rect(center=(132, 100))
+
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
         elif self.player_type == 2:
-            pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 232, 32, bar_length, 32), color="red")
+            pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            stars_text = self.SV.FONT_MIDDLE.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
+                                                    "dark blue")
+
+            stars_rect = stars_text.get_rect(center=(self.screenwidth - 532, 100))
+
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
     def check_if_dead(self) -> bool:
         if self.hp <= 0:
@@ -174,26 +281,24 @@ class Ninja:
             return False
 
     def jump(self):
-        if self.jump_counter > 90:
+        if self.jump_counter > 100:
             self.jumping = False
             self.jump_counter = 0
-            self.ypos = self.screenheight - self.size
+            self.ypos = self.screenheight - self.size - 100
 
-        elif 0 <= self.jump_counter <= 45:
-            self.ypos -= 3
+        elif 0 <= self.jump_counter <= 50:
+            self.ypos -= 5
 
-        elif self.jump_counter > 45:
-            self.ypos += 3
+        elif self.jump_counter > 50:
+            self.ypos += 5
 
-
-
-    def update_and_draw(self) -> str|None:
-        self.inputs()
+    def update_and_draw(self, enemy) -> str|None:
+        self.inputs(enemy)
         self.punch()
-        pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="green", width=1)
+        pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="red", width=1)
 
         if self.punch_dict['thrown'] == True:
-            pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.ypos + self.size / 4, self.punch_dict['range'], 32), color="blue")
+            pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.ypos + self.size / 4, self.punch_dict['range'], self.punch_dict['width']), color="blue")
 
         self.draw_healthbar()
 
@@ -201,4 +306,4 @@ class Ninja:
             self.jump()
             self.jump_counter += 1
 
-
+        self.special_attack()

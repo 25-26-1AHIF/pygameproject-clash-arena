@@ -63,8 +63,6 @@ class Screens:
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark blue")
         beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
 
-        pygame.draw.rect(surface=self.screen, rect=(0, self.screenheight-75, self.screenwidth, 100), color="green")
-
         self.screen.blit(source=title_text, dest=title_text_rect)
 
         pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="light blue")
@@ -98,6 +96,8 @@ class Screens:
 
         beenden_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark blue")
         beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
+
+        hintergrund = pygame.image.load("assets/chat_abi.png").convert()
 
         while True:
 
@@ -139,6 +139,9 @@ class Screens:
                         return "beenden"
 
             self.screen.fill("white")
+
+            self.screen.blit(hintergrund, (0,0))
+
             self.draw_menu()
 
             pygame.display.flip()
@@ -414,3 +417,49 @@ class Screens:
             self.screen.blit(source=zurueck, dest=zurueck_rect)
 
             pygame.display.flip()
+
+    def play_screen(self, player_1, player_2):
+        pygame.display.set_caption("Clash Arena")
+        play_map = pygame.image.load("assets/map.png").convert()
+
+        vs_text = self.SV.FONT_BIG.render("VS", True, "dark red")
+        vs_rect = vs_text.get_rect(center=(self.screenwidth/2, 64))
+
+        running = True
+        # Die Main Loop (Game Loop)
+        while running:
+
+            # Jedes Ereignis (Event) durchgehen
+
+            for event in pygame.event.get():
+
+                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
+
+                if event.type == pygame.QUIT:
+                    running = False
+
+            self.screen.fill("white")
+
+            # Das Display updaten
+            self.screen.blit(play_map, (0, 0))
+            self.screen.blit(source=vs_text, dest=vs_rect)
+
+            player_1.update_and_draw(player_2)
+            player_2.update_and_draw(player_1)
+
+            player_1.check_punch_collision(player_2)
+            player_2.check_punch_collision(player_1)
+
+            if player_1.check_if_dead() == True:
+                return "Player 2"
+
+            if player_2.check_if_dead() == True:
+                return "Player 1"
+
+            pygame.display.flip()
+
+            # FPS überwachen
+
+            self.clock.tick(self.FPS)
+
+        # PyGame sauber beenden (cleanup)
