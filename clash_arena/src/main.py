@@ -2,7 +2,7 @@ import pygame
 
 from characters.ninja import Ninja
 # from characters.thief import Thief
-# from characters.vampire import Vampire
+from characters.knight import Knight
 from screens.screens import Screens
 
 from screen_variables.screen_variables import ScreenVariables as SV
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     player_1.ypos -= player_1.size
     player_1.change_last_direction()
 
-    player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+    player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
     player_2.ypos -= player_2.size
     player_2.change_x_pos()
     player_1.change_last_direction()

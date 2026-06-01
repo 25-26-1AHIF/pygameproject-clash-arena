@@ -1,4 +1,5 @@
 import pygame
+import json
 
 class Screens:
     def __init__(self, fps, screen, clock, screenwidth, screenheight, screenvariablen):
@@ -9,135 +10,59 @@ class Screens:
         self.screenheight = screenheight
         self.SV = screenvariablen
 
-    def play_screen(self, player_1, player_2) -> str:
-        pygame.display.set_caption("Clash Arena")
+    def error_message(self):
+        message = self.SV.FONT_BIG.render("Spiel konnte nicht gespeichert werden!", True, "dark red")
+        message_rect = message.get_rect(center=(self.screenwidth/2, 500))
 
-        running = True
-        # Die Main Loop (Game Loop)
-        while running:
-
-            # Jedes Ereignis (Event) durchgehen
-
-            for event in pygame.event.get():
-
-                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
-
-                if event.type == pygame.QUIT:
-                    return "beenden"
-
-            self.screen.fill("black")
-
-            # Das Display updaten
-
-            player_1.update_and_draw()
-            player_2.update_and_draw()
-
-            player_1.check_punch_collision(player_2)
-            player_2.check_punch_collision(player_1)
-
-            if player_1.check_if_dead() == True:
-                return "Player 2"
-
-            if player_2.check_if_dead() == True:
-                return "Player 1"
-
-            pygame.display.flip()
-
-            # FPS überwachen
-
-            self.clock.tick(self.FPS)
-
-    def draw_menu(self):
-
-        neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark blue")
-        neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth/2, 125))
-
-        kampf_laden_text = self.SV.FONT_MIDDLE.render("Kampf laden", True, "dark blue")
-        kampf_laden_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 175))
-
-        steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark blue")
-        steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 225))
-
-        beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark blue")
-        beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
-
-        pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="light blue")
-        self.screen.blit(source=neuer_kampf_text, dest=neuer_kampf_rect)
-
-        pygame.draw.rect(surface=self.screen, rect=kampf_laden_rect, color="light blue")
-        self.screen.blit(source=kampf_laden_text, dest=kampf_laden_rect)
-
-        pygame.draw.rect(surface=self.screen, rect=steuerung_rect, color="light blue")
-        self.screen.blit(source=steuerung_text, dest=steuerung_rect)
-
-        pygame.draw.rect(surface=self.screen, rect=beenden_rect, color="light blue")
-        self.screen.blit(source=beenden_text, dest=beenden_rect)
-
-
-
-
-    def menu(self) -> str:
-
-        neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark blue")
-        neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 125))
-
-        kampf_laden_text = self.SV.FONT_MIDDLE.render("Kampf laden", True, "dark blue")
-        kampf_laden_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 175))
-
-        steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark blue")
-        steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 225))
-
-        beenden_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark blue")
-        beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 275))
-
-        hintergrund = pygame.image.load("assets/clash_arena_menu.png").convert()
+        return_message = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
+        return_rect = return_message.get_rect(center=(self.screenwidth/2, 700))
 
         while True:
 
-            # Jedes Ereignis (Event) durchgehen
             for event in pygame.event.get():
 
-                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
-
-                if event.type == pygame.QUIT:
-                    return "beenden"
-
-                if event.type == pygame.KEYDOWN:
-
-                    if event.type == pygame.K_ESCAPE:
-                        return "beenden"
-
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # klickposition = event.pos (x, y)
-                    if neuer_kampf_rect.collidepoint(event.pos):
-                        print("Starten gedrückt")
-                        return "spielen"
+                    if return_rect.collidepoint(event.pos):
+                        return
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # klickposition = event.pos (x, y)
-                    if kampf_laden_rect.collidepoint(event.pos):
-                        print("Laden gedrückt")
-                        return "laden"
+            self.screen.fill("black")
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # klickposition = event.pos (x, y)
-                    if steuerung_rect.collidepoint(event.pos):
-                        print("Steuerung gedrückt")
-                        return "steuerung"
-
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # klickposition = event.pos (x, y)
-                    if beenden_rect.collidepoint(event.pos):
-                        print("Beenden gedrückt")
-                        return "beenden"
-
-            self.screen.fill("white")
-
-            self.screen.blit(hintergrund, (0, 0))
-
-            self.draw_menu()
+            self.screen.blit(source=message, dest=message_rect)
+            self.screen.blit(source=return_message, dest=return_rect)
 
             pygame.display.flip()
+
+
+    def draw_menu(self):
+
+        neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark red")
+        neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth/2, 490))
+
+        kampf_laden_text = self.SV.FONT_MIDDLE.render("Kampf laden", True, "dark red")
+        kampf_laden_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 580))
+
+        steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark red")
+        steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 670))
+
+        highscore_text = self.SV.FONT_MIDDLE.render("Highscores", True, "dark red")
+        highscore_rect = highscore_text.get_rect(center=(self.screenwidth/2, 760))
+
+        beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
+        beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 840))
+
+        #pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="black")
+        self.screen.blit(source=neuer_kampf_text, dest=neuer_kampf_rect)
+
+        #pygame.draw.rect(surface=self.screen, rect=kampf_laden_rect, color="black")
+        self.screen.blit(source=kampf_laden_text, dest=kampf_laden_rect)
+
+        #pygame.draw.rect(surface=self.screen, rect=steuerung_rect, color="black")
+        self.screen.blit(source=steuerung_text, dest=steuerung_rect)
+
+        #pygame.draw.rect(surface=self.screen, rect=beenden_rect, color="black")
+        self.screen.blit(source=beenden_text, dest=beenden_rect)
+
+        self.screen.blit(source=highscore_text, dest=highscore_rect)
 
     def todo(self) -> str:
 
@@ -182,7 +107,7 @@ class Screens:
         text2 = self.SV.FONT_BIG.render("Spieler 2", True, "dark blue")
         text2_rect = text.get_rect(center=(self.screenwidth / 2, 200))
 
-        zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
+        zurueck = self.SV.FONT_BIG.render("Zurück", True, "dark blue")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 350))
 
         hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
@@ -374,18 +299,21 @@ class Screens:
                     pygame.display.update()
 
 
-    def pausemenu(self):
+    def pausemenu(self, player_1, player_2):
 
         self.SV.init()
 
         text = self.SV.FONT_BIG.render("Weiterspielen", True, "dark blue")
-        text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
+        text_rect = text.get_rect(center=(self.screenwidth / 2, 200))
 
         text2 = self.SV.FONT_BIG.render("Steuerung", True, "dark blue")
-        text2_rect = text.get_rect(center=(self.screenwidth / 2, 275))
+        text2_rect = text2.get_rect(center=(self.screenwidth / 2, 300))
+
+        text3 = self.SV.FONT_BIG.render("Speichern und Zurück zum Menü", True, "dark red")
+        text3_rect = text3.get_rect(center=(self.screenwidth/2, 400))
 
         zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
-        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 400))
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 500))
 
         while True:
 
@@ -395,11 +323,6 @@ class Screens:
 
                 if event.type == pygame.QUIT:
                     return "beenden"
-
-                if event.type == pygame.KEYDOWN:
-
-                    if event.type == pygame.K_ESCAPE:
-                        return "beenden"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
@@ -412,6 +335,42 @@ class Screens:
                         return "weiter"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if text3_rect.collidepoint(event.pos):
+
+
+                        try:
+                            save_player_1: dict = {'player type' : player_1.player_type,
+                                                'hp' : player_1.hp,
+                                                'xpos' : player_1.xpos,
+                                                'ypos' : player_2.ypos,
+                                                'special_dict' : player_1.special_dict,
+                                                'name' : player_1.name}
+
+                            save_player_2: dict = {'player type': player_2.player_type,
+                                                'hp': player_2.hp,
+                                                'xpos': player_2.xpos,
+                                                'ypos': player_2.ypos,
+                                                'special_dict': player_2.special_dict,
+                                                'name' : player_2.name}
+
+                            player_list: list = [save_player_1, save_player_2]
+
+                            with open("saved_game/saved_game.json", "w") as fp:
+                                json.dump(player_list, fp, indent=2)
+
+                            print("Erfolgreich gespeichert!")
+                            return "menü"
+
+                        except:
+                            print("Speichern fehlgeschlagen!")
+                            self.error_message()
+                            return "weiter"
+
+
+
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
                     if zurueck_rect.collidepoint(event.pos):
                         return "menü"
@@ -420,6 +379,7 @@ class Screens:
 
             self.screen.blit(source=text, dest=text_rect)
             self.screen.blit(source=text2, dest=text2_rect)
+            self.screen.blit(source=text3, dest=text3_rect)
 
             pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="light blue")
             self.screen.blit(source=zurueck, dest=zurueck_rect)
@@ -428,7 +388,7 @@ class Screens:
 
     def play_screen(self, player_1, player_2):
         pygame.display.set_caption("Clash Arena")
-        play_map = pygame.image.load("assets/map.png").convert()
+        play_map = pygame.image.load("assets/play_map.png").convert()
 
         vs_text = self.SV.FONT_BIG.render("VS", True, "dark red")
         vs_rect = vs_text.get_rect(center=(self.screenwidth/2, 64))
@@ -445,6 +405,14 @@ class Screens:
 
                 if event.type == pygame.QUIT:
                     running = False
+
+            keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_ESCAPE]:
+                next_screen = self.pausemenu(player_1, player_2)
+
+                if next_screen == "menü":
+                    return "menü"
 
             self.screen.fill("white")
 
@@ -474,3 +442,104 @@ class Screens:
             self.clock.tick(self.FPS)
 
         # PyGame sauber beenden (cleanup)
+
+    def highscores(self):
+
+        background = pygame.image.load("assets/highscore_hintergrund.png")
+
+        zurueck_text = self.SV.FONT_MIDDLE.render("Zurück zum Menü", True, "dark red")
+        zurueck_rect = zurueck_text.get_rect(center=(self.screenwidth/2, 840))
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if zurueck_rect.collidepoint(event.pos):
+                        return
+
+            self.screen.fill("black")
+
+            self.screen.blit(source=background, dest=(0,0))
+
+            self.screen.blit(source=zurueck_text, dest=zurueck_rect)
+
+            pygame.display.flip()
+
+
+    def menu(self) -> str:
+
+        neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark red")
+        neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 490))
+
+        kampf_laden_text = self.SV.FONT_MIDDLE.render("Kampf laden", True, "dark red")
+        kampf_laden_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 580))
+
+        steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark red")
+        steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 670))
+
+        highscore_text = self.SV.FONT_MIDDLE.render("Highscores", True, "dark red")
+        highscore_rect = highscore_text.get_rect(center=(self.screenwidth / 2, 760))
+
+        beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
+        beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 840))
+
+        hintergrund = pygame.image.load("assets/clash_arena_menu.png").convert()
+
+        pygame.mixer.music.load("assets/title_music.mp3")
+
+        pygame.mixer.music.play(-1)
+
+        while True:
+
+            # Jedes Ereignis (Event) durchgehen
+            for event in pygame.event.get():
+
+                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
+
+                if event.type == pygame.QUIT:
+                    return "beenden"
+
+                if event.type == pygame.KEYDOWN:
+
+                    if event.type == pygame.K_ESCAPE:
+                        return "beenden"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if neuer_kampf_rect.collidepoint(event.pos):
+                        print("Starten gedrückt")
+                        pygame.mixer.music.stop()
+                        return "spielen"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if kampf_laden_rect.collidepoint(event.pos):
+                        print("Laden gedrückt")
+                        return "laden"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if steuerung_rect.collidepoint(event.pos):
+                        print("Steuerung gedrückt")
+                        self.steuerung()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if highscore_rect.collidepoint(event.pos):
+                        print("Highscores gedrückt")
+                        self.highscores()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    # klickposition = event.pos (x, y)
+                    if beenden_rect.collidepoint(event.pos):
+                        print("Beenden gedrückt")
+                        return "beenden"
+
+            self.screen.fill("white")
+
+            self.screen.blit(hintergrund, (0, 0))
+
+            self.draw_menu()
+            pygame.display.flip()

@@ -12,6 +12,6 @@ class ScreenVariables:
     def init():
         pygame.init()
 
-        ScreenVariables.FONT_BIG = pygame.sysfont.SysFont("arial", 48, bold=True)
-        ScreenVariables.FONT_MIDDLE = pygame.sysfont.SysFont("arial", 36, bold=False)
-        ScreenVariables.FONT_SMALL = pygame.sysfont.SysFont("arial", 24, bold=False)
+        ScreenVariables.FONT_BIG = pygame.sysfont.SysFont("calisto mt", 72, bold=True)
+        ScreenVariables.FONT_MIDDLE = pygame.sysfont.SysFont("century", 48, bold=True)
+        ScreenVariables.FONT_SMALL = pygame.sysfont.SysFont("arial", 36, bold=False)
