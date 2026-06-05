@@ -4,19 +4,17 @@ from clash_arena.src.sprite.sprite import Sprite
 
 
 class Knight:
-    def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps,
-                 clock):
+    def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps, clock):
         self.screen = screen
         self.screenwidth = screenwidth
         self.screenheight = screenheight
 
         self.counter = 0
 
-        self.punch_dict: dict = {"thrown": False,
-                                 "range": 48,
-                                 "xpos": 0,
-                                 "ypos": 0,
-                                 "width": 48}
+        self.punch_dict: dict = {"thrown" : False,
+                            "range": 48,
+                            "xpos" : 0,
+                            "ypos" : 0}
 
         self.player_type: int = player_type
 
@@ -42,19 +40,21 @@ class Knight:
 
         self.fps = fps
         self.clock: pygame.time.Clock = clock
-
         self.special_dict: dict = {'type': "Heavy-Strike",
                                    'used': False,
-                                   'list': [],
-                                   'damage': 10,
-                                   'sword health': 8,
+                                   'list' : [],
+                                   'durability': 8,
+                                   'damage': 8,
                                    'ignore next': False,
-                                   'counter' : 0,
-                                   'range' : 48,
                                    'xpos' : 0,
-                                   'ypos': 0}
+                                   'ypos' : 0,
+                                   'range' : 48,
+                                   'counter' : 0}
 
         self.name = ""
+
+    def get_rect(self):
+        return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -90,6 +90,8 @@ class Knight:
                     pass
                 else:
                     self.punch_dict['thrown'] = True
+                    pygame.mixer.music.load("assets/knight/knight_punch_sound_effect.mp3")
+                    pygame.mixer.music.play()
 
             if pressed_keys[pygame.K_f]:
                 self.blocking = True
@@ -103,17 +105,23 @@ class Knight:
 
                 else:
                     self.jumping = True
+                    pygame.mixer.music.load("assets/jump_sound_effect.mp3")
+                    pygame.mixer.music.play()
 
             if pressed_keys[pygame.K_q]:
-                if self.special_dict['sword health'] <= 0:
+                if self.special_dict['used'] == True:
                     pass
-
-                elif self.special_dict['used'] == True:
+                elif self.special_dict['counter'] > 0:
                     pass
-
+                elif self.blocking == True:
+                    pass
+                elif self.special_dict['durability'] <= 0:
+                    pass
                 else:
                     self.special_dict['used'] = True
-                    self.special_dict['sword health'] -= 1
+                    self.special_dict['durability'] -= 1
+                    pygame.mixer.music.load("assets/knight/heavy_strike_sound_effect.mp3")
+                    pygame.mixer.music.play()
 
 
         elif self.player_type == 2:
@@ -136,6 +144,8 @@ class Knight:
                     pass
                 else:
                     self.punch_dict['thrown'] = True
+                    pygame.mixer.music.load("assets/knight/knight_punch_sound_effect.mp3")
+                    pygame.mixer.music.play()
 
             if pressed_keys[pygame.K_i]:
                 if self.jumping == True:
@@ -143,6 +153,8 @@ class Knight:
 
                 else:
                     self.jumping = True
+                    pygame.mixer.music.load("assets/jump_sound_effect.mp3")
+                    pygame.mixer.music.play()
 
             if pressed_keys[pygame.K_m]:
                 self.blocking = True
@@ -151,25 +163,30 @@ class Knight:
                 self.blocking = False
 
             if pressed_keys[pygame.K_u]:
-                if self.special_dict['sword health'] <= 0:
+                if self.special_dict['used'] == True:
                     pass
-
-                elif self.special_dict['used'] == True:
+                elif self.special_dict['counter'] > 0:
                     pass
-
+                elif self.blocking == True:
+                    pass
+                elif self.special_dict['durability'] <= 0:
+                    pass
                 else:
                     self.special_dict['used'] = True
-                    self.special_dict['sword health'] -= 1
+                    self.special_dict['durability'] -= 1
+                    pygame.mixer.music.load("assets/knight/heavy_strike_sound_effect.mp3")
+                    pygame.mixer.music.play()
+
 
     def punch(self):
         if self.punch_dict['thrown'] == True:
-            self.counter += 1
+             self.counter += 1
 
-            if self.last_direction == "right":
-                self.punch_dict['xpos'] = self.xpos + self.size
+             if self.last_direction == "right":
+                 self.punch_dict['xpos'] = self.xpos + self.size
 
-            elif self.last_direction == "left":
-                self.punch_dict['xpos'] = self.xpos - self.punch_dict['range']
+             elif self.last_direction == "left":
+                 self.punch_dict['xpos'] = self.xpos - self.punch_dict['range']
 
         else:
             return
@@ -180,47 +197,34 @@ class Knight:
 
     def special_attack(self):
         if self.special_dict['used'] == True:
-            self.special_dict['counter'] += 1
+             self.special_dict['counter'] += 1
 
-            if self.last_direction == "right":
-                self.special_dict['xpos'] = self.xpos + self.size
+             if self.last_direction == "right":
+                 self.special_dict['xpos'] = self.xpos + self.size
 
-            elif self.last_direction == "left":
-                self.special_dict['xpos'] = self.xpos - self.punch_dict['range']
+             elif self.last_direction == "left":
+                 self.special_dict['xpos'] = self.xpos - self.special_dict['range']
 
         else:
             return
 
-        if self.special_dict['counter'] == 45:
+        if self.special_dict['counter'] == 50:
             self.special_dict['counter'] = 0
             self.special_dict['used'] = False
 
-
-
-
     def check_punch_collision(self, enemy):
-
         if enemy.punch_dict['thrown'] == True:
 
             if self.skip_next_punch == False:
 
-                if enemy.punch_dict['xpos'] <= self.xpos <= enemy.punch_dict['xpos'] + enemy.punch_dict['range'] and \
-                        enemy.punch_dict['ypos'] <= self.ypos:
+                if self.blocking == False:
 
-                    if self.blocking == True and self.last_direction == "left":
-                        pass
-                    else:
+                    punch_rect = pygame.Rect(enemy.punch_dict['xpos'], enemy.punch_dict['ypos'], enemy.punch_dict['range'],enemy.punch_dict['range'])
+                    player_rect = pygame.Rect(self.xpos, self.ypos, self.size, self.size)
+
+                    if punch_rect.colliderect(player_rect):
                         self.hp -= enemy.damage
-                        self.skip_next_punch = True
-
-                if enemy.punch_dict['xpos'] <= self.xpos + self.size <= enemy.xpos and enemy.punch_dict[
-                    'ypos'] <= self.ypos:
-
-                    if self.blocking == True and self.last_direction == "right":
-                        pass
-
-                    else:
-                        self.hp -= enemy.damage
+                        print(f"Spieler {self.player_type} wurde getroffen")
                         self.skip_next_punch = True
 
         else:
@@ -231,23 +235,22 @@ class Knight:
         bar_length = self.hp * 4
 
         if self.player_type == 1:
-            pygame.draw.rect(surface=self.screen, rect=(132, 32, bar_length, 48), color="red")
-            stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
-                                                "dark blue")
+            pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
+                                                    "dark blue")
 
             stars_rect = stars_text.get_rect(center=(290, 100))
 
-            self.screen.blit(source=stars_text, dest=stars_rect)
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
         elif self.player_type == 2:
-            pygame.draw.rect(surface=self.screen, rect=(self.screenwidth - 532, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
+                                                    "dark blue")
 
-            stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['sword health']}", True,
-                                                   "dark blue")
+            stars_rect = stars_text.get_rect(center=(self.screenwidth - 375, 100))
 
-            stars_rect = stars_text.get_rect(center=(self.screenwidth - 365, 100))
-
-            self.screen.blit(source=stars_text, dest=stars_rect)
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
     def check_if_dead(self) -> bool:
         if self.hp <= 0:
@@ -257,48 +260,101 @@ class Knight:
             return False
 
     def jump(self):
-        if self.jump_counter > 100:
+        if self.jump_counter > 80:
             self.jumping = False
             self.jump_counter = 0
             self.ypos = self.screenheight - self.size - 100
 
-        elif 0 <= self.jump_counter <= 50:
-            self.ypos -= 5
+        elif 0 <= self.jump_counter <= 40:
+            self.ypos -= 6
 
-        elif self.jump_counter > 50:
-            self.ypos += 5
+        elif self.jump_counter > 40:
+            self.ypos += 6
 
-    def check_special_collision(self, special_dict):
-        if special_dict['type'] == "Ninja-Star":
+    def check_special_collision(self, enemy):
+        if enemy.special_dict['type'] == "Ninja-Star":
 
-            if len(special_dict['list']) > 0:
-                if self.xpos <= special_dict['list'][0].xpos <= self.xpos + self.size or special_dict['list'][
-                    0].xpos <= self.xpos <= special_dict['list'][0].xpos + special_dict['list'][0].size:
+            if len(enemy.special_dict['list']) > 0:
+                star_rect = enemy.special_dict['list'][0].get_rect()
+                player_rect = self.get_rect()
 
-                    if self.ypos <= special_dict['list'][0].ypos <= self.ypos + self.size:
+                if star_rect.colliderect(player_rect):
+                    self.hp -= enemy.special_dict['damage']
+                    enemy.special_dict['list'] = []
+                    enemy.special_dict['used'] = False
 
-                        if self.special_dict['ignore next'] == False:
-                            self.hp -= special_dict['damage']
+        if enemy.special_dict['type'] == "Heavy-Strike":
+            if enemy.special_dict['used'] == True:
 
-                            self.special_dict['ignore next'] = True
+                if self.special_dict['ignore next'] == False:
 
-                else:
-                    self.special_dict['ignore next'] = False
+                    strike_rect = pygame.Rect(enemy.special_dict['xpos'], enemy.special_dict['ypos'], enemy.special_dict['range'], enemy.special_dict['range'])
+                    player_rect = self.get_rect()
 
-    def update_and_draw(self, enemy) -> str | None:
+                    if strike_rect.colliderect(player_rect):
+                        self.hp -= enemy.special_dict['damage']
+                        self.special_dict['ignore next'] = True
+
+            else:
+                self.special_dict['ignore next'] = False
+
+        if enemy.special_dict['type'] == "Blood-Suck":
+
+            if enemy.special_dict['used'] == True:
+
+                if self.special_dict['ignore next'] == False:
+
+                    strike_rect = pygame.Rect(enemy.special_dict['xpos'], enemy.special_dict['ypos'], enemy.special_dict['range'], enemy.special_dict['range'])
+                    player_rect = self.get_rect()
+
+                    if strike_rect.colliderect(player_rect):
+                        self.hp -= enemy.special_dict['damage']
+                        enemy.hp += enemy.special_dict['damage']
+
+                        if enemy.hp > 100:
+                            enemy.hp = 100
+
+                        enemy.special_dict['blood level'] += 20
+
+                        self.special_dict['ignore next'] = True
+
+            else:
+                self.special_dict['ignore next'] = False
+
+
+
+    def update_and_draw(self) -> str|None:
         self.inputs()
         self.punch()
-        pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="red", width=1)
+        rect = self.get_rect()
+        pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
 
         if self.punch_dict['thrown'] == True:
-            pygame.draw.rect(surface=self.screen,
-                             rect=(self.punch_dict['xpos'], self.ypos + self.size / 4, self.punch_dict['range'],
-                                   self.punch_dict['width']), color="blue")
+            if self.last_direction == "left":
+                self.punch_dict['xpos'] = self.xpos - self.punch_dict['range']
+            else:
+                self.punch_dict['xpos'] = self.xpos + self.size
+
+            self.punch_dict['ypos'] = self.ypos + self.size / 4
+
+            print()
+            print(self.ypos)
+            print(self.xpos)
+            print(self.punch_dict['xpos'])
+            print(self.punch_dict['ypos'])
+
+            pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['range']), color="blue")
 
         if self.special_dict['used'] == True:
-            pygame.draw.rect(surface=self.screen,
-                             rect=(self.special_dict['xpos'], self.ypos + self.size / 4, self.special_dict['range'],
-                                   self.special_dict['range']), color="blue")
+            if self.last_direction == "left":
+                self.special_dict['xpos'] = self.xpos - self.special_dict['range']
+            else:
+                self.special_dict['xpos'] = self.xpos + self.size
+
+            self.special_dict['ypos'] = self.ypos + self.size / 4
+
+
+            pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
 
         self.draw_healthbar()
 

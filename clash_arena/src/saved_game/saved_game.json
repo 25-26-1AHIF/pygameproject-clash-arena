@@ -1,35 +1,36 @@
 [
   {
     "player type": 1,
-    "hp": 100,
-    "xpos": 1065,
+    "hp": 80,
+    "xpos": 735,
     "ypos": 715,
     "special_dict": {
       "type": "Ninja-Star",
-      "used": false,
       "list": [],
-      "stars-left": 10,
+      "used": false,
+      "stars-left": 5,
       "damage": 5,
       "ignore next": false
     },
     "name": ""
   },
+
   {
     "player type": 2,
-    "hp": 100,
-    "xpos": 655,
+    "hp": 89,
+    "xpos": 995,
     "ypos": 715,
     "special_dict": {
-      "type": "Heavy-Strike",
+      "type": "Blood-Suck",
       "used": false,
       "list": [],
+      "blood level": 40,
       "damage": 10,
-      "sword health": 7,
       "ignore next": false,
       "counter": 0,
       "range": 48,
-      "xpos": 607,
-      "ypos": 0
+      "xpos": 947,
+      "ypos": 747.0
     },
     "name": ""
   }

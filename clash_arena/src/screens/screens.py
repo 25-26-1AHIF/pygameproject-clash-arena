@@ -1,6 +1,10 @@
 import pygame
 import json
 
+from clash_arena.src.characters.knight import Knight
+from clash_arena.src.characters.ninja import Ninja
+from clash_arena.src.characters.vampire import Vampire
+
 class Screens:
     def __init__(self, fps, screen, clock, screenwidth, screenheight, screenvariablen):
         self.FPS = fps
@@ -10,8 +14,8 @@ class Screens:
         self.screenheight = screenheight
         self.SV = screenvariablen
 
-    def error_message(self):
-        message = self.SV.FONT_BIG.render("Spiel konnte nicht gespeichert werden!", True, "dark red")
+    def error_message(self, message: str):
+        message = self.SV.FONT_BIG.render(message, True, "dark red")
         message_rect = message.get_rect(center=(self.screenwidth/2, 500))
 
         return_message = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
@@ -101,16 +105,19 @@ class Screens:
 
     def steuerung(self):
 
-        text = self.SV.FONT_BIG.render("Spieler 1", True, "dark blue")
-        text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
+        text = self.SV.FONT_BIG.render("Spieler 1", True, "dark red")
+        text_rect = text.get_rect(center=(self.screenwidth / 2, 300))
 
-        text2 = self.SV.FONT_BIG.render("Spieler 2", True, "dark blue")
-        text2_rect = text.get_rect(center=(self.screenwidth / 2, 200))
+        text2 = self.SV.FONT_BIG.render("Spieler 2", True, "dark red")
+        text2_rect = text.get_rect(center=(self.screenwidth / 2, 400))
 
-        zurueck = self.SV.FONT_BIG.render("Zurück", True, "dark blue")
-        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 350))
+        zurueck = self.SV.FONT_BIG.render("Zurück", True, "dark red")
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 700))
 
         hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
+
+        spezialattacken = self.SV.FONT_BIG.render("Spezialattacken erklärung", True, "dark red")
+        spezialattacken_rect = spezialattacken.get_rect(center=(self.screenwidth/2, 500))
 
         while True:
 
@@ -141,6 +148,10 @@ class Screens:
                     if zurueck_rect.collidepoint(event.pos):
                         return "menü"
 
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if spezialattacken_rect.collidepoint(event.pos):
+                        self.spezialattacken()
+
 
             self.screen.fill("white")
 
@@ -149,34 +160,100 @@ class Screens:
 
             self.screen.blit(source=text, dest=text_rect)
             self.screen.blit(source=text2, dest=text2_rect)
+            self.screen.blit(source=spezialattacken, dest=spezialattacken_rect)
 
-            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="light blue")
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="black")
             self.screen.blit(source=zurueck, dest=zurueck_rect)
 
             pygame.display.flip()
 
+    def laden(self, screen, SV, clock, FPS) -> tuple | str:
+        try:
+            dict_list: list[dict] = []
+            with open("saved_game/saved_game.json", "r") as fp:
+                dict_list = json.load(fp)
+
+            player_1_dict = dict_list[0]
+            player_2_dict = dict_list[1]
+
+            if player_1_dict['special_dict']['type'] == "Ninja-Star":
+                player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
+                player_1.hp = player_1_dict['hp']
+                player_1.xpos = player_1_dict['xpos']
+                player_1.ypos -= player_1.size
+
+                player_1.special_dict = player_1_dict['special_dict']
+
+            elif player_1_dict['special_dict']['type'] == "Heavy-Strike":
+                player_1 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
+                player_1.hp = player_1_dict['hp']
+                player_1.xpos = player_1_dict['xpos']
+                player_1.ypos -= player_1.size
+
+                player_1.special_dict = player_1_dict['special_dict']
+
+            else:
+                player_1 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
+                player_1.hp = player_1_dict['hp']
+                player_1,xpos = player_1_dict['xpos']
+                player_1.ypos -= player_1.size
+
+                player_1.special_dict = player_1_dict['special_dict']
+
+            if player_2_dict['special_dict']['type'] == "Ninja-Star":
+                player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'], 2, FPS, clock)
+                player_2.hp = player_2_dict['hp']
+                player_2.xpos = player_2_dict['xpos']
+                player_2.ypos -= player_2.size
+                player_2.special_dict = player_2_dict['special_dict']
+
+            elif player_2_dict['special_dict']['type'] == "Heavy-Strike":
+                player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'], 2, FPS, clock)
+                player_2.hp = player_2_dict['hp']
+                player_2.xpos = player_2_dict['xpos']
+                player_2.ypos -= player_2.size
+
+                player_2.special_dict = player_2_dict['special_dict']
+
+            else:
+                player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'],
+                                   2, FPS, clock)
+                player_2.hp = player_1_dict['hp']
+                player_2, xpos = player_1_dict['xpos']
+                player_2.ypos -= player_1.size
+
+                player_2.special_dict = player_1_dict['special_dict']
+
+            return player_1, player_2
+
+        except:
+            self.error_message("Spielstand konnte nicht geladen werden!")
+            return "menü"
+
+
+
     def steuerung_anzeigen(self, spieler):
 
         if spieler == 1:
-            springen_text = self.SV.FONT_MIDDLE.render("W -> Springen", True, "dark blue")
+            springen_text = self.SV.FONT_MIDDLE.render("W -> Springen", True, "dark red")
             springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 50))
 
-            links_text = self.SV.FONT_MIDDLE.render("A -> links laufen", True, "dark blue")
+            links_text = self.SV.FONT_MIDDLE.render("A -> links laufen", True, "dark red")
             links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 100))
 
-            rechts_text = self.SV.FONT_MIDDLE.render("D -> rechts laufen", True, "dark blue")
+            rechts_text = self.SV.FONT_MIDDLE.render("D -> rechts laufen", True, "dark red")
             rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 150))
 
-            attacke_text = self.SV.FONT_MIDDLE.render("E -> normale Attacke", True, "dark blue")
+            attacke_text = self.SV.FONT_MIDDLE.render("E -> normale Attacke", True, "dark red")
             attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 200))
 
-            spezial_text = self.SV.FONT_MIDDLE.render("Q -> Spezialattacke", True, "dark blue")
+            spezial_text = self.SV.FONT_MIDDLE.render("Q -> Spezialattacke", True, "dark red")
             spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 250))
 
-            blocken_text = self.SV.FONT_MIDDLE.render("F -> Blocken", True, "dark blue")
+            blocken_text = self.SV.FONT_MIDDLE.render("F -> Blocken", True, "dark red")
             blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 300))
 
-            zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark blue")
+            zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
             zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
 
             hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
@@ -203,50 +280,50 @@ class Screens:
 
                     self.screen.blit(source=hintergrund, dest=(0, 0))
 
-                    pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="black")
                     self.screen.blit(source=springen_text, dest=springen_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=links_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=links_text_rect, color="black")
                     self.screen.blit(source=links_text, dest=links_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=rechts_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=rechts_text_rect, color="black")
                     self.screen.blit(source=rechts_text, dest=rechts_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=attacke_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=attacke_text_rect, color="black")
                     self.screen.blit(source=attacke_text, dest=attacke_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=spezial_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=spezial_text_rect, color="black")
                     self.screen.blit(source=spezial_text, dest=spezial_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="black")
                     self.screen.blit(source=blocken_text, dest=blocken_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
 
                     pygame.display.update()
 
 
         elif spieler == 2:
-            springen_text = self.SV.FONT_MIDDLE.render("I -> Springen", True, "dark blue")
+            springen_text = self.SV.FONT_MIDDLE.render("I -> Springen", True, "dark red")
             springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 50))
 
-            links_text = self.SV.FONT_MIDDLE.render("J -> links laufen", True, "dark blue")
+            links_text = self.SV.FONT_MIDDLE.render("J -> links laufen", True, "dark red")
             links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 100))
 
-            rechts_text = self.SV.FONT_MIDDLE.render("L -> rechts laufen", True, "dark blue")
+            rechts_text = self.SV.FONT_MIDDLE.render("L -> rechts laufen", True, "dark red")
             rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 150))
 
-            attacke_text = self.SV.FONT_MIDDLE.render("O -> normale Attacke", True, "dark blue")
+            attacke_text = self.SV.FONT_MIDDLE.render("O -> normale Attacke", True, "dark red")
             attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 200))
 
-            spezial_text = self.SV.FONT_MIDDLE.render("U -> Spezialattacke", True, "dark blue")
+            spezial_text = self.SV.FONT_MIDDLE.render("U -> Spezialattacke", True, "dark red")
             spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 250))
 
-            blocken_text = self.SV.FONT_MIDDLE.render("M -> Blocken", True, "dark blue")
+            blocken_text = self.SV.FONT_MIDDLE.render("M -> Blocken", True, "dark red")
             blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 300))
 
-            zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark blue")
+            zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
             zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
 
             hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
@@ -274,25 +351,25 @@ class Screens:
                     self.screen.blit(source=hintergrund, dest=(0, 0))
 
 
-                    pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=springen_text_rect, color="black")
                     self.screen.blit(source=springen_text, dest=springen_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=links_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=links_text_rect, color="black")
                     self.screen.blit(source=links_text, dest=links_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=rechts_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=rechts_text_rect, color="black")
                     self.screen.blit(source=rechts_text, dest=rechts_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=attacke_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=attacke_text_rect, color="black")
                     self.screen.blit(source=attacke_text, dest=attacke_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=spezial_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=spezial_text_rect, color="black")
                     self.screen.blit(source=spezial_text, dest=spezial_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="black")
                     self.screen.blit(source=blocken_text, dest=blocken_text_rect)
 
-                    pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="light blue")
+                    pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
 
 
@@ -364,7 +441,7 @@ class Screens:
 
                         except:
                             print("Speichern fehlgeschlagen!")
-                            self.error_message()
+                            self.error_message("Spiel konnte nicht gespeichert werden")
                             return "weiter"
 
 
@@ -420,20 +497,20 @@ class Screens:
             self.screen.blit(play_map, (0, 0))
             self.screen.blit(source=vs_text, dest=vs_rect)
 
-            player_1.update_and_draw(player_2)
-            player_2.update_and_draw(player_1)
+            player_1.update_and_draw()
+            player_2.update_and_draw()
 
             player_1.check_punch_collision(player_2)
             player_2.check_punch_collision(player_1)
 
-            player_1.check_special_collision(player_2.special_dict)
-            player_2.check_special_collision(player_1.special_dict)
+            player_1.check_special_collision(player_2)
+            player_2.check_special_collision(player_1)
 
             if player_1.check_if_dead() == True:
-                return "Player 2"
+                return "menü"
 
             if player_2.check_if_dead() == True:
-                return "Player 1"
+                return "menü"
 
             pygame.display.flip()
 
@@ -467,6 +544,111 @@ class Screens:
 
             pygame.display.flip()
 
+    def spezialattacken(self):
+        tipp = self.SV.FONT_MIDDLE.render("Tipp: Spezialattacken können nicht geblockt werden.", True, "dark red")
+        tipp_rect = tipp.get_rect(center=(self.screenwidth/2, self.screenheight - 75))
+
+        ninja = self.SV.FONT_MIDDLE.render("Ninja-Star", True, "dark red")
+        ninja_rect = ninja.get_rect(center=(self.screenwidth/2, 200))
+
+        knight = self.SV.FONT_MIDDLE.render("Heavy-Strike", True, "dark red")
+        knight_rect = knight.get_rect(center=(self.screenwidth/2, 350))
+
+        zurueck = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 775))
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    return "beenden"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if ninja_rect.collidepoint(event.pos):
+                        self.explain_special_attacks("Ninja-Star")
+
+                    if knight_rect.collidepoint(event.pos):
+                        self.explain_special_attacks("Heavy-Strike")
+
+                    if zurueck_rect.collidepoint(event.pos):
+                        return ""
+
+            self.screen.fill("black")
+
+            self.screen.blit(source=zurueck, dest=zurueck_rect)
+            self.screen.blit(source=ninja, dest = ninja_rect)
+            self.screen.blit(source=knight, dest=knight_rect)
+
+            pygame.display.flip()
+
+
+    def explain_special_attacks(self, type):
+
+        zurueck = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
+        zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 800))
+
+        if type == "Heavy-Strike":
+
+            text = self.SV.FONT_MIDDLE.render("Ein starker Schwung mit dem Schwert,", True, "dark red")
+            text_rect = text.get_rect(center=(self.screenwidth / 2 + 100, 300))
+
+            text2 = self.SV.FONT_MIDDLE.render("welcher deinem Gegner 8 Schaden zufügt.", True, "dark red")
+            text2_rect = text2.get_rect(center = (self.screenwidth/2 + 100, 350))
+
+            text3 = self.SV.FONT_MIDDLE.render("Jede Ausführung der Attacke nutzt deine Klinge ab.", True, "dark red")
+            text3_rect = text3.get_rect(center=(self.screenwidth/2 + 100, 400))
+
+            text4 = self.SV.FONT_MIDDLE.render("Diese Attacke kann maximal 8 Mal ausgeführt werden.", True, "dark red")
+            text4_rect = text4.get_rect(center=(self.screenwidth/2 + 100, 450))
+
+            image = pygame.image.load("assets/knight/sword_for_special_attack_explanation.png").convert_alpha()
+
+        elif type == "Ninja-Star":
+            text = self.SV.FONT_MIDDLE.render("Ein Wurf eines Ninja-Sternes, welcher deinem ", True, "dark red")
+            text_rect = text.get_rect(center=(self.screenwidth / 2 + 100, 300))
+
+            text2 = self.SV.FONT_MIDDLE.render("Gegner bei einem Treffer 5 Schaden zufügt.", True, "dark red")
+            text2_rect = text2.get_rect(center=(self.screenwidth/2 + 100, 350))
+
+            text3 = self.SV.FONT_MIDDLE.render("Diese Attacke kannst du maximal 10 Mal benutzen,", True, "dark red")
+            text3_rect = text3.get_rect(center=(self.screenwidth / 2 + 100, 400))
+
+            text4 = self.SV.FONT_MIDDLE.render("dann hast du keine Ninja-Sterne mehr übrig.", True, "dark red")
+            text4_rect = text4.get_rect(center=(self.screenwidth/2 + 100, 450))
+
+            image: pygame.surface.Surface = pygame.image.load("assets/ninja/ninja_star_for_special_attack_explanation.png").convert_alpha()
+
+        else:
+            # TODO
+            return ""
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    return "beenden"
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if zurueck_rect.collidepoint(event.pos):
+                        return ""
+
+            self.screen.fill("black")
+
+            self.screen.blit(source=text, dest= text_rect)
+            self.screen.blit(source=text2, dest = text2_rect)
+            self.screen.blit(source=text3, dest=text3_rect)
+            self.screen.blit(source=text4, dest=text4_rect)
+
+            self.screen.blit(source=zurueck, dest=zurueck_rect)
+
+            self.screen.blit(image, (0, 300))
+
+            pygame.display.flip()
+
+
 
     def menu(self) -> str:
 
@@ -474,7 +656,7 @@ class Screens:
         neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 490))
 
         kampf_laden_text = self.SV.FONT_MIDDLE.render("Kampf laden", True, "dark red")
-        kampf_laden_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 580))
+        kampf_laden_rect = kampf_laden_text.get_rect(center=(self.screenwidth / 2, 580))
 
         steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark red")
         steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 670))
@@ -483,12 +665,11 @@ class Screens:
         highscore_rect = highscore_text.get_rect(center=(self.screenwidth / 2, 760))
 
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
-        beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 840))
+        beenden_rect = beenden_text.get_rect(center=(self.screenwidth / 2, 840))
 
         hintergrund = pygame.image.load("assets/clash_arena_menu.png").convert()
 
         pygame.mixer.music.load("assets/title_music.mp3")
-
         pygame.mixer.music.play(-1)
 
         while True:
@@ -501,10 +682,6 @@ class Screens:
                 if event.type == pygame.QUIT:
                     return "beenden"
 
-                if event.type == pygame.KEYDOWN:
-
-                    if event.type == pygame.K_ESCAPE:
-                        return "beenden"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
@@ -517,6 +694,7 @@ class Screens:
                     # klickposition = event.pos (x, y)
                     if kampf_laden_rect.collidepoint(event.pos):
                         print("Laden gedrückt")
+                        pygame.mixer.music.stop()
                         return "laden"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:

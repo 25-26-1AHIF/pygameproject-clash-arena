@@ -1,7 +1,7 @@
 import pygame
 
 from characters.ninja import Ninja
-# from characters.thief import Thief
+from characters.vampire import Vampire
 from characters.knight import Knight
 from screens.screens import Screens
 
@@ -80,13 +80,13 @@ def menu(clock, FPS, screen):
 
         clock.tick(FPS)
 
-def main(screens, player_1, player_2):
+def main(screens, screen, SV, clock, FPS):
     next_screen: str = ""
 
     while True:
 
-        if next_screen == "spielen":
-            next_screen = screens.play_screen(player_1, player_2)
+        if next_screen == "":
+            next_screen = screens.menu()
 
         elif next_screen == "beenden":
             return
@@ -95,14 +95,30 @@ def main(screens, player_1, player_2):
             next_screen = screens.steuerung()
 
         elif next_screen == "laden":
-            next_screen = screens.todo()
-            # TODO
+            player_tuple = screens.laden(screen, SV, clock, FPS)
+
+            if player_tuple == "menü":
+                next_screen = "menü"
+
+            else:
+                player_1 = player_tuple[0]
+                player_2 = player_tuple[1]
+
+                next_screen = screens.play_screen(player_1, player_2)
 
         elif next_screen == "menü":
             next_screen = screens.menu()
 
-        else:
-            next_screen = screens.menu()
+        elif next_screen == "spielen":
+            player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
+            player_1.ypos -= player_1.size
+            player_1.change_last_direction()
+
+            player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+            player_2.ypos -= player_2.size
+            player_2.change_x_pos()
+            player_1.change_last_direction()
+            next_screen = screens.play_screen(player_1, player_2)
 
 
 if __name__ == "__main__":
@@ -113,17 +129,16 @@ if __name__ == "__main__":
 
     screens = Screens(FPS, screen, clock, SV.width, SV.height, SV)
 
-    player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
-    player_1.ypos -= player_1.size
-    player_1.change_last_direction()
+    #player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
+    #player_1.ypos -= player_1.size
+    #player_1.change_last_direction()
 
-    player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
-    player_2.ypos -= player_2.size
-    player_2.change_x_pos()
-    player_1.change_last_direction()
+    #player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+    #player_2.ypos -= player_2.size
+    #player_2.change_x_pos()
+    #player_1.change_last_direction()
 
-    # menu ist nicht fertig, muss von alex noch gemacht werden
-    main(screens, player_1, player_2)
+    main(screens, screen, SV, clock, FPS)
 
     # screens.play_screen(player_1, player_2)
 
