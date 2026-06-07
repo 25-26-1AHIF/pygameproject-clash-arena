@@ -117,7 +117,47 @@ def main(screens, screen, SV, clock, FPS):
             player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
             player_2.ypos -= player_2.size
             player_2.change_x_pos()
-            player_1.change_last_direction()
+            player_2.change_last_direction()
+            next_screen = screens.play_screen(player_1, player_2)
+
+        elif next_screen == "character select":
+            character_1 = screens.choose_character(1)
+
+            if character_1 == "ninja":
+                player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
+                player_1.ypos -= player_1.size
+                player_1.change_last_direction()
+
+            elif character_1 == "knight":
+                player_1 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
+                player_1.ypos -= player_1.size
+                player_1.change_last_direction()
+
+            else:
+                player_1 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
+                player_1.ypos -= player_1.size
+                player_1.change_last_direction()
+
+            character_2 = screens.choose_character(2)
+
+            if character_2 == "ninja":
+                player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+                player_2.ypos -= player_2.size
+                player_2.change_x_pos()
+                player_2.change_last_direction()
+
+            elif character_2 == "knight":
+                player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+                player_2.ypos -= player_2.size
+                player_2.change_x_pos()
+                player_2.change_last_direction()
+
+            else:
+                player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
+                player_2.ypos -= player_2.size
+                player_2.change_x_pos()
+                player_2.change_last_direction()
+
             next_screen = screens.play_screen(player_1, player_2)
 
 

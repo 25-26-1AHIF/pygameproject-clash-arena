@@ -36,6 +36,69 @@ class Screens:
 
             pygame.display.flip()
 
+    def choose_character(self, player: int) -> str:
+
+        text = self.SV.FONT_MIDDLE.render(f"Spieler {player}:", True, "dark red")
+        text_rect = text.get_rect(center=(self.screenwidth/2, 150))
+
+        ninja_select = pygame.image.load("assets/ninja/ninja_select.png").convert()
+        ninja_rect = pygame.Rect(250, 300, 128*2, 128*2)
+        width, height = ninja_select.get_size()
+
+        ninja_hit_rect = pygame.Rect(250 + 128/2, 300+64, 128, 192)
+        scaled_ninja = pygame.transform.scale(ninja_select, (width*2, height*2))
+
+        knight_select = pygame.image.load("assets/knight/knight_select.png").convert()
+        knight_rect = pygame.Rect((self.screenwidth/2 - 100), 270, 128*2.3, 128*2.3)
+        knight_hit_rect = pygame.Rect((self.screenwidth/2 - 100) + 128/1.7, 270+102, 128, 192)
+
+        width, height = knight_select.get_size()
+        scaled_knight = pygame.transform.scale(knight_select, (width*2.3, height*2.3))
+
+        vampire_select = pygame.image.load("assets/vampire/vampire_select.png").convert()
+
+        vampire_rect = pygame.Rect(self.screenwidth-350, 300, 128*2, 128*2)
+        vampire_hit_rect = pygame.Rect((self.screenwidth-350) + 128/2, 300+64, 128, 192)
+
+        width, height = vampire_select.get_size()
+        scaled_vampire = pygame.transform.scale(vampire_select, (width*2, height*2))
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if ninja_hit_rect.collidepoint(event.pos):
+                        print("ninja")
+                        return "ninja"
+
+                    if knight_hit_rect.collidepoint(event.pos):
+                        print("knight")
+                        return "knight"
+
+                    if vampire_hit_rect.collidepoint(event.pos):
+                        print("vampire")
+                        return "vampire"
+
+
+            self.screen.fill("black")
+
+            self.screen.blit(text, text_rect)
+
+            self.screen.blit(scaled_ninja, ninja_rect)
+            pygame.draw.rect(surface=self.screen, rect=ninja_hit_rect, color="white", width=1)
+
+            self.screen.blit(scaled_knight, knight_rect)
+            pygame.draw.rect(surface=self.screen, rect=knight_hit_rect, color="white", width=1)
+
+            self.screen.blit(scaled_vampire, vampire_rect)
+            pygame.draw.rect(surface=self.screen, rect=vampire_hit_rect, color="white", width=1)
+
+
+            pygame.display.flip()
+
+
 
     def draw_menu(self):
 
@@ -184,7 +247,7 @@ class Screens:
 
                 player_1.special_dict = player_1_dict['special_dict']
 
-            elif player_1_dict['special_dict']['type'] == "Heavy-Strike":
+            elif player_1_dict['special_dict']['type'] == "Stab":
                 player_1 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
                 player_1.hp = player_1_dict['hp']
                 player_1.xpos = player_1_dict['xpos']
@@ -207,7 +270,7 @@ class Screens:
                 player_2.ypos -= player_2.size
                 player_2.special_dict = player_2_dict['special_dict']
 
-            elif player_2_dict['special_dict']['type'] == "Heavy-Strike":
+            elif player_2_dict['special_dict']['type'] == "Stab":
                 player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'], 2, FPS, clock)
                 player_2.hp = player_2_dict['hp']
                 player_2.xpos = player_2_dict['xpos']
@@ -218,11 +281,11 @@ class Screens:
             else:
                 player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'],
                                    2, FPS, clock)
-                player_2.hp = player_1_dict['hp']
-                player_2, xpos = player_1_dict['xpos']
-                player_2.ypos -= player_1.size
+                player_2.hp = player_2_dict['hp']
+                player_2.xpos = player_2_dict['xpos']
+                player_2.ypos -= player_2.size
 
-                player_2.special_dict = player_1_dict['special_dict']
+                player_2.special_dict = player_2_dict['special_dict']
 
             return player_1, player_2
 
@@ -236,25 +299,25 @@ class Screens:
 
         if spieler == 1:
             springen_text = self.SV.FONT_MIDDLE.render("W -> Springen", True, "dark red")
-            springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 50))
+            springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 150))
 
             links_text = self.SV.FONT_MIDDLE.render("A -> links laufen", True, "dark red")
-            links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 100))
+            links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 250))
 
             rechts_text = self.SV.FONT_MIDDLE.render("D -> rechts laufen", True, "dark red")
-            rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 150))
+            rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 350))
 
             attacke_text = self.SV.FONT_MIDDLE.render("E -> normale Attacke", True, "dark red")
-            attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 200))
+            attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 450))
 
             spezial_text = self.SV.FONT_MIDDLE.render("Q -> Spezialattacke", True, "dark red")
-            spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 250))
+            spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 550))
 
             blocken_text = self.SV.FONT_MIDDLE.render("F -> Blocken", True, "dark red")
-            blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 300))
+            blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 650))
 
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
-            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
+            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 750))
 
             hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
 
@@ -306,25 +369,25 @@ class Screens:
 
         elif spieler == 2:
             springen_text = self.SV.FONT_MIDDLE.render("I -> Springen", True, "dark red")
-            springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 50))
+            springen_text_rect = springen_text.get_rect(center=(self.screenwidth / 2, 150))
 
             links_text = self.SV.FONT_MIDDLE.render("J -> links laufen", True, "dark red")
-            links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 100))
+            links_text_rect = links_text.get_rect(center=(self.screenwidth / 2, 250))
 
             rechts_text = self.SV.FONT_MIDDLE.render("L -> rechts laufen", True, "dark red")
-            rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 150))
+            rechts_text_rect = rechts_text.get_rect(center=(self.screenwidth / 2, 350))
 
             attacke_text = self.SV.FONT_MIDDLE.render("O -> normale Attacke", True, "dark red")
-            attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 200))
+            attacke_text_rect = attacke_text.get_rect(center=(self.screenwidth / 2, 450))
 
             spezial_text = self.SV.FONT_MIDDLE.render("U -> Spezialattacke", True, "dark red")
-            spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 250))
+            spezial_text_rect = spezial_text.get_rect(center=(self.screenwidth / 2, 550))
 
             blocken_text = self.SV.FONT_MIDDLE.render("M -> Blocken", True, "dark red")
-            blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 300))
+            blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 650))
 
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
-            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 400))
+            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 750))
 
             hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
 
@@ -548,14 +611,19 @@ class Screens:
         tipp = self.SV.FONT_MIDDLE.render("Tipp: Spezialattacken können nicht geblockt werden.", True, "dark red")
         tipp_rect = tipp.get_rect(center=(self.screenwidth/2, self.screenheight - 75))
 
-        ninja = self.SV.FONT_MIDDLE.render("Ninja-Star", True, "dark red")
+        ninja = self.SV.FONT_MIDDLE.render("Ninja", True, "dark red")
         ninja_rect = ninja.get_rect(center=(self.screenwidth/2, 200))
 
-        knight = self.SV.FONT_MIDDLE.render("Heavy-Strike", True, "dark red")
+        knight = self.SV.FONT_MIDDLE.render("Knight", True, "dark red")
         knight_rect = knight.get_rect(center=(self.screenwidth/2, 350))
+
+        vampire = self.SV.FONT_MIDDLE.render("Vampire", True, "dark red")
+        vampire_rect = vampire.get_rect(center=(self.screenwidth/2, 500))
 
         zurueck = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 775))
+
+        background = pygame.image.load("assets/steuerung_hintergrund.png").convert()
 
         while True:
 
@@ -570,16 +638,21 @@ class Screens:
                         self.explain_special_attacks("Ninja-Star")
 
                     if knight_rect.collidepoint(event.pos):
-                        self.explain_special_attacks("Heavy-Strike")
+                        self.explain_special_attacks("Stab")
+
+                    if vampire_rect.collidepoint(event.pos):
+                        self.explain_special_attacks("else")
 
                     if zurueck_rect.collidepoint(event.pos):
                         return ""
 
             self.screen.fill("black")
+            self.screen.blit(source=background, dest=(0,0))
 
             self.screen.blit(source=zurueck, dest=zurueck_rect)
             self.screen.blit(source=ninja, dest = ninja_rect)
             self.screen.blit(source=knight, dest=knight_rect)
+            self.screen.blit(source=vampire, dest=vampire_rect)
 
             pygame.display.flip()
 
@@ -589,9 +662,12 @@ class Screens:
         zurueck = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 800))
 
-        if type == "Heavy-Strike":
+        background = pygame.image.load("assets/steuerung_hintergrund.png").convert()
 
-            text = self.SV.FONT_MIDDLE.render("Ein starker Schwung mit dem Schwert,", True, "dark red")
+
+        if type == "Stab":
+
+            text = self.SV.FONT_MIDDLE.render("Ein starker Stich mit dem Schwert,", True, "dark red")
             text_rect = text.get_rect(center=(self.screenwidth / 2 + 100, 300))
 
             text2 = self.SV.FONT_MIDDLE.render("welcher deinem Gegner 8 Schaden zufügt.", True, "dark red")
@@ -621,8 +697,19 @@ class Screens:
             image: pygame.surface.Surface = pygame.image.load("assets/ninja/ninja_star_for_special_attack_explanation.png").convert_alpha()
 
         else:
-            # TODO
-            return ""
+            text = self.SV.FONT_MIDDLE.render("Mit dieser Attacke ziehst du deinem Gegner 10 hp", True, "dark red")
+            text_rect = text.get_rect(center=(self.screenwidth / 2 + 100, 300))
+
+            text2 = self.SV.FONT_MIDDLE.render("ab und regenerierst dich um 10 hp.", True, "dark red")
+            text2_rect = text2.get_rect(center=(self.screenwidth / 2 + 100, 350))
+
+            text3 = self.SV.FONT_MIDDLE.render("Diese Attacke kannst du maximal 5 Mal benutzen,", True, "dark red")
+            text3_rect = text3.get_rect(center=(self.screenwidth / 2 + 100, 400))
+
+            text4 = self.SV.FONT_MIDDLE.render("bevor dein Blut-Level zu hoch wird", True, "dark red")
+            text4_rect = text4.get_rect(center=(self.screenwidth / 2 + 100, 450))
+
+            image: pygame.surface.Surface = pygame.image.load("assets/vampire/bat_for_special_attack_explanation.png").convert_alpha()
 
         while True:
 
@@ -636,6 +723,12 @@ class Screens:
                         return ""
 
             self.screen.fill("black")
+            self.screen.blit(source=background, dest=(0,0))
+
+            pygame.draw.rect(surface=self.screen, rect=text_rect, color="black")
+            pygame.draw.rect(surface=self.screen, rect=text2_rect, color="black")
+            pygame.draw.rect(surface=self.screen, rect=text3_rect, color="black")
+            pygame.draw.rect(surface=self.screen, rect=text4_rect, color="black")
 
             self.screen.blit(source=text, dest= text_rect)
             self.screen.blit(source=text2, dest = text2_rect)
@@ -688,7 +781,7 @@ class Screens:
                     if neuer_kampf_rect.collidepoint(event.pos):
                         print("Starten gedrückt")
                         pygame.mixer.music.stop()
-                        return "spielen"
+                        return "character select"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)

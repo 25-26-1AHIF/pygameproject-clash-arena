@@ -20,8 +20,11 @@ class Knight:
 
         self.xpos: float = xpos
         self.ypos: float = ypos
-        self.size: float = size
+        self.size: float = size * 2.5
         self.last_direction: str = ""
+
+        self.hit_rect = pygame.Rect(self.xpos + 128 / 2, self.ypos + 64, 128, 192)
+
 
         self.hp: int = 100
         self.damage: int = damage
@@ -40,7 +43,7 @@ class Knight:
 
         self.fps = fps
         self.clock: pygame.time.Clock = clock
-        self.special_dict: dict = {'type': "Heavy-Strike",
+        self.special_dict: dict = {'type': "Stab",
                                    'used': False,
                                    'list' : [],
                                    'durability': 8,
@@ -52,6 +55,68 @@ class Knight:
                                    'counter' : 0}
 
         self.name = ""
+
+        self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
+        self.punch_sound = pygame.mixer.Sound("assets/knight/knight_punch_sound_effect.mp3")
+        self.special_sound_effect = pygame.mixer.Sound("assets/knight/heavy_strike_sound_effect.mp3")
+
+
+        self.walk_right_animation = Sprite(filepath="assets/knight/walk.png", image_count=7,
+                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.walk_right_animation.load_spritesheet(2.5, False)
+
+        self.walk_left_animation = Sprite(filepath="assets/knight/walk.png", image_count=7,
+                                          image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.walk_left_animation.load_spritesheet(2.5, True)
+
+
+        self.idle_right_animation = Sprite(filepath="assets/knight/idle.png", image_count=4,
+                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.idle_right_animation.load_spritesheet(2.5, False)
+
+        self.idle_left_animation = Sprite(filepath="assets/knight/idle.png", image_count=4,
+                                          image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.idle_left_animation.load_spritesheet(2.5, True)
+
+
+        self.punch_right_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
+                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.punch_right_animation.load_spritesheet(2.5, False)
+
+        self.punch_left_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
+                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.punch_left_animation.load_spritesheet(2.5, True)
+
+
+        self.block_right_animation = Sprite(filepath="assets/knight/block.png", image_count=5,
+                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.block_right_animation.load_spritesheet(2.5, False)
+
+        self.block_left_animation = Sprite(filepath="assets/knight/block.png", image_count=5,
+                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.block_left_animation.load_spritesheet(2.5, True)
+
+
+        self.jump_right_animation = Sprite(filepath="assets/knight/jump.png", image_count=6,
+                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.jump_right_animation.load_spritesheet(2.5, False)
+
+        self.jump_left_animation = Sprite(filepath="assets/knight/jump.png", image_count=6,
+                                          image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+        self.jump_left_animation.load_spritesheet(2.5, True)
+
+
+        self.special_left_animation = Sprite(filepath="assets/knight/special.png", image_count=4,
+                                             image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.special_left_animation.load_spritesheet(2.5, True)
+
+        self.special_right_animation = Sprite(filepath="assets/knight/special.png", image_count=4,
+                                              image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.special_right_animation.load_spritesheet(2.5, False)
+
+        self.frame_counter = 0
+
+        self.animation_playing = ""
 
     def get_rect(self):
         return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
@@ -71,44 +136,54 @@ class Knight:
         pressed_keys = pygame.key.get_pressed()
         if self.player_type == 1:
 
-            if pressed_keys[pygame.K_a]:
-                if self.xpos <= 0:
-                    pass
-                else:
-                    self.xpos -= 5
-                    self.last_direction = "left"
-
-            if pressed_keys[pygame.K_d]:
-                if self.xpos >= self.screenwidth - self.size:
-                    pass
-                else:
-                    self.xpos += 5
-                    self.last_direction = "right"
-
-            if pressed_keys[pygame.K_e]:
-                if self.counter > 0:
-                    pass
-                else:
-                    self.punch_dict['thrown'] = True
-                    pygame.mixer.music.load("assets/knight/knight_punch_sound_effect.mp3")
-                    pygame.mixer.music.play()
-
             if pressed_keys[pygame.K_f]:
                 self.blocking = True
 
             else:
                 self.blocking = False
 
-            if pressed_keys[pygame.K_w]:
+            if pressed_keys[pygame.K_a]:
+                if self.xpos <= 0:
+                    pass
+                else:
+                    self.xpos -= 7
+                    self.last_direction = "left"
+
+                    if self.animation_playing != "walking left":
+                        self.frame_counter = 0
+                    self.animation_playing = "walking left"
+
+            elif pressed_keys[pygame.K_d]:
+                if self.xpos >= self.screenwidth - self.size:
+                    pass
+                else:
+                    self.xpos += 7
+                    self.last_direction = "right"
+
+                    if self.animation_playing != "walking right":
+                        self.frame_counter = 0
+                    self.animation_playing = "walking right"
+
+            elif pressed_keys[pygame.K_e]:
+                if self.counter > 0:
+                    pass
+                else:
+                    self.punch_dict['thrown'] = True
+                    self.punch_sound.play()
+                    self.frame_counter = 0
+
+
+            elif pressed_keys[pygame.K_w]:
                 if self.jumping == True:
                     pass
 
                 else:
                     self.jumping = True
-                    pygame.mixer.music.load("assets/jump_sound_effect.mp3")
-                    pygame.mixer.music.play()
+                    self.jump_sound.play()
+                    self.frame_counter = 0
+                    self.animation_playing = "jump"
 
-            if pressed_keys[pygame.K_q]:
+            elif pressed_keys[pygame.K_q]:
                 if self.special_dict['used'] == True:
                     pass
                 elif self.special_dict['counter'] > 0:
@@ -120,41 +195,16 @@ class Knight:
                 else:
                     self.special_dict['used'] = True
                     self.special_dict['durability'] -= 1
-                    pygame.mixer.music.load("assets/knight/heavy_strike_sound_effect.mp3")
-                    pygame.mixer.music.play()
+                    self.special_sound_effect.play()
+                    self.frame_counter = 0
 
+
+            else:
+                if self.animation_playing != "idle":
+                    self.frame_counter = 0
+                self.animation_playing = "idle"
 
         elif self.player_type == 2:
-            if pressed_keys[pygame.K_j]:
-                if self.xpos <= 0:
-                    pass
-                else:
-                    self.xpos -= 5
-                    self.last_direction = "left"
-
-            if pressed_keys[pygame.K_l]:
-                if self.xpos >= self.screenwidth - self.size:
-                    pass
-                else:
-                    self.xpos += 5
-                    self.last_direction = "right"
-
-            if pressed_keys[pygame.K_o]:
-                if self.counter > 0:
-                    pass
-                else:
-                    self.punch_dict['thrown'] = True
-                    pygame.mixer.music.load("assets/knight/knight_punch_sound_effect.mp3")
-                    pygame.mixer.music.play()
-
-            if pressed_keys[pygame.K_i]:
-                if self.jumping == True:
-                    pass
-
-                else:
-                    self.jumping = True
-                    pygame.mixer.music.load("assets/jump_sound_effect.mp3")
-                    pygame.mixer.music.play()
 
             if pressed_keys[pygame.K_m]:
                 self.blocking = True
@@ -162,7 +212,44 @@ class Knight:
             else:
                 self.blocking = False
 
-            if pressed_keys[pygame.K_u]:
+            if pressed_keys[pygame.K_j]:
+                if self.xpos <= 0:
+                    pass
+                else:
+                    self.xpos -= 7
+                    self.last_direction = "left"
+
+                    if self.animation_playing != "walking left":
+                        self.frame_counter = 0
+                    self.animation_playing = "walking left"
+
+            elif pressed_keys[pygame.K_l]:
+                if self.xpos >= self.screenwidth - self.size:
+                    pass
+                else:
+                    self.xpos += 7
+                    self.last_direction = "right"
+
+                    if self.animation_playing != "walking right":
+                        self.frame_counter = 0
+                    self.animation_playing = "walking right"
+
+            elif pressed_keys[pygame.K_o]:
+                if self.counter > 0:
+                    pass
+                else:
+                    self.punch_dict['thrown'] = True
+                    self.punch_sound.play()
+
+            elif pressed_keys[pygame.K_i]:
+                if self.jumping == True:
+                    pass
+
+                else:
+                    self.jumping = True
+                    self.jump_sound.play()
+
+            elif pressed_keys[pygame.K_u]:
                 if self.special_dict['used'] == True:
                     pass
                 elif self.special_dict['counter'] > 0:
@@ -174,8 +261,12 @@ class Knight:
                 else:
                     self.special_dict['used'] = True
                     self.special_dict['durability'] -= 1
-                    pygame.mixer.music.load("assets/knight/heavy_strike_sound_effect.mp3")
-                    pygame.mixer.music.play()
+                    self.special_sound_effect.play()
+
+            else:
+                if self.animation_playing != "idle":
+                    self.frame_counter = 0
+                self.animation_playing = "idle"
 
 
     def punch(self):
@@ -220,9 +311,9 @@ class Knight:
                 if self.blocking == False:
 
                     punch_rect = pygame.Rect(enemy.punch_dict['xpos'], enemy.punch_dict['ypos'], enemy.punch_dict['range'],enemy.punch_dict['range'])
-                    player_rect = pygame.Rect(self.xpos, self.ypos, self.size, self.size)
+                    #pygame.draw.rect(surface=self.screen, rect=self.hit_rect, color="white", width=1)
 
-                    if punch_rect.colliderect(player_rect):
+                    if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
                         print(f"Spieler {self.player_type} wurde getroffen")
                         self.skip_next_punch = True
@@ -276,22 +367,20 @@ class Knight:
 
             if len(enemy.special_dict['list']) > 0:
                 star_rect = enemy.special_dict['list'][0].get_rect()
-                player_rect = self.get_rect()
 
-                if star_rect.colliderect(player_rect):
+                if star_rect.colliderect(self.hit_rect):
                     self.hp -= enemy.special_dict['damage']
                     enemy.special_dict['list'] = []
                     enemy.special_dict['used'] = False
 
-        if enemy.special_dict['type'] == "Heavy-Strike":
+        if enemy.special_dict['type'] == "Stab":
             if enemy.special_dict['used'] == True:
 
                 if self.special_dict['ignore next'] == False:
 
                     strike_rect = pygame.Rect(enemy.special_dict['xpos'], enemy.special_dict['ypos'], enemy.special_dict['range'], enemy.special_dict['range'])
-                    player_rect = self.get_rect()
 
-                    if strike_rect.colliderect(player_rect):
+                    if strike_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.special_dict['damage']
                         self.special_dict['ignore next'] = True
 
@@ -305,9 +394,8 @@ class Knight:
                 if self.special_dict['ignore next'] == False:
 
                     strike_rect = pygame.Rect(enemy.special_dict['xpos'], enemy.special_dict['ypos'], enemy.special_dict['range'], enemy.special_dict['range'])
-                    player_rect = self.get_rect()
 
-                    if strike_rect.colliderect(player_rect):
+                    if strike_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.special_dict['damage']
                         enemy.hp += enemy.special_dict['damage']
 
@@ -327,15 +415,60 @@ class Knight:
         self.inputs()
         self.punch()
         rect = self.get_rect()
-        pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
+
+        if self.animation_playing == "walking right":
+            self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "walking left":
+            self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+
+        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
+            self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.punch_dict['thrown'] == True and self.last_direction == "left":
+            self.punch_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.blocking == True and self.last_direction == "right":
+            self.block_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.jumping == True and self.last_direction == "right":
+            self.jump_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.jumping == True and self.last_direction == "left":
+            self.jump_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.blocking == True and self.last_direction == "left":
+            self.block_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "idle" and self.last_direction == "right":
+            self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.special_dict['used'] == True and self.last_direction == "right":
+            self.special_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.special_dict['used'] == True and self.last_direction == "left":
+            self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "idle" and self.last_direction == "left":
+            self.idle_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        #pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
+
+
+        if self.last_direction == "right":
+            self.hit_rect = pygame.Rect(self.xpos, self.ypos + 128, 128, 192)
+
+        elif self.last_direction == "left":
+            self.hit_rect = pygame.Rect(self.xpos + 192, self.ypos + 128, 128, 192)
+
 
         if self.punch_dict['thrown'] == True:
             if self.last_direction == "left":
-                self.punch_dict['xpos'] = self.xpos - self.punch_dict['range']
+                self.punch_dict['xpos'] = self.xpos + 128 + 16
             else:
-                self.punch_dict['xpos'] = self.xpos + self.size
+                self.punch_dict['xpos'] = self.xpos + 128
 
-            self.punch_dict['ypos'] = self.ypos + self.size / 4
+            self.punch_dict['ypos'] = self.ypos + self.size / 4 + 96
 
             print()
             print(self.ypos)
@@ -343,18 +476,19 @@ class Knight:
             print(self.punch_dict['xpos'])
             print(self.punch_dict['ypos'])
 
-            pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['range']), color="blue")
+            #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['range']), color="blue")
+
 
         if self.special_dict['used'] == True:
             if self.last_direction == "left":
-                self.special_dict['xpos'] = self.xpos - self.special_dict['range']
+                self.special_dict['xpos'] = self.xpos + 128 + 16
             else:
-                self.special_dict['xpos'] = self.xpos + self.size
+                self.special_dict['xpos'] = self.xpos + 128
 
-            self.special_dict['ypos'] = self.ypos + self.size / 4
+            self.special_dict['ypos'] = self.ypos + self.size / 4 + 96
 
 
-            pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
+            #pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
 
         self.draw_healthbar()
 
@@ -362,4 +496,7 @@ class Knight:
             self.jump()
             self.jump_counter += 1
 
+
+
         self.special_attack()
+        self.frame_counter += 1
