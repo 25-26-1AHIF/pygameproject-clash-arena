@@ -443,16 +443,16 @@ class Screens:
 
         self.SV.init()
 
-        text = self.SV.FONT_BIG.render("Weiterspielen", True, "dark blue")
+        text = self.SV.FONT_BIG.render("Weiterspielen", True, "dark red")
         text_rect = text.get_rect(center=(self.screenwidth / 2, 200))
 
-        text2 = self.SV.FONT_BIG.render("Steuerung", True, "dark blue")
+        text2 = self.SV.FONT_BIG.render("Steuerung", True, "dark red")
         text2_rect = text2.get_rect(center=(self.screenwidth / 2, 300))
 
         text3 = self.SV.FONT_BIG.render("Speichern und Zurück zum Menü", True, "dark red")
         text3_rect = text3.get_rect(center=(self.screenwidth/2, 400))
 
-        zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
+        zurueck = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark red")
         zurueck_rect = zurueck.get_rect(center=(self.screenwidth / 2, 500))
 
         while True:
@@ -515,18 +515,18 @@ class Screens:
                     if zurueck_rect.collidepoint(event.pos):
                         return "menü"
 
-            self.screen.fill("white")
+            self.screen.fill("black")
 
             self.screen.blit(source=text, dest=text_rect)
             self.screen.blit(source=text2, dest=text2_rect)
             self.screen.blit(source=text3, dest=text3_rect)
 
-            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="light blue")
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="black")
             self.screen.blit(source=zurueck, dest=zurueck_rect)
 
             pygame.display.flip()
 
-    def play_screen(self, player_1, player_2):
+    def play_screen(self, player_1, player_2) -> str|int:
         pygame.display.set_caption("Clash Arena")
         play_map = pygame.image.load("assets/play_map.png").convert()
 
@@ -570,10 +570,10 @@ class Screens:
             player_2.check_special_collision(player_1)
 
             if player_1.check_if_dead() == True:
-                return "menü"
+                return 2
 
             if player_2.check_if_dead() == True:
-                return "menü"
+                return 1
 
             pygame.display.flip()
 
@@ -648,6 +648,9 @@ class Screens:
 
             self.screen.fill("black")
             self.screen.blit(source=background, dest=(0,0))
+
+            pygame.draw.rect(surface=self.screen, rect=tipp_rect, color="black")
+            self.screen.blit(tipp, tipp_rect)
 
             self.screen.blit(source=zurueck, dest=zurueck_rect)
             self.screen.blit(source=ninja, dest = ninja_rect)

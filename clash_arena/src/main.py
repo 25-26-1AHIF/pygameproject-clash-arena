@@ -9,11 +9,13 @@ from screen_variables.screen_variables import ScreenVariables as SV
 
 def game_over_screen(clock, FPS, winner, screen):
 
-    game_over_text = SV.FONT_BIG.render(f"{winner} gewinnt!", True, "white")
+    game_over_text = SV.FONT_BIG.render(f"Spieler {winner} gewinnt!", True, "dark red")
     game_over_rect = game_over_text.get_rect(center=(SV.width / 2, SV.height / 2))
 
-    menu_text = SV.FONT_MIDDLE.render("Zurück zum Menü", True, "white")
+    menu_text = SV.FONT_MIDDLE.render("Zurück zum Menü", True, "dark red")
     menu_text_rect = menu_text.get_rect(center=(SV.width/2, SV.height - 100))
+
+    hintergrund = pygame.image.load("assets/highscore_hintergrund.png").convert()
 
     running = True
 
@@ -31,11 +33,15 @@ def game_over_screen(clock, FPS, winner, screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 if menu_text_rect.collidepoint(event.pos):
-                    print("Zurück zum Menü")
+                    return
 
         screen.fill("black")
 
+        screen.blit(hintergrund, (0,0))
+
         screen.blit(source=game_over_text, dest = game_over_rect)
+        pygame.draw.rect(surface=screen, rect=menu_text_rect, color="black")
+        screen.blit(source=menu_text, dest = menu_text_rect)
 
         # Das Display updaten
 
@@ -159,6 +165,13 @@ def main(screens, screen, SV, clock, FPS):
                 player_2.change_last_direction()
 
             next_screen = screens.play_screen(player_1, player_2)
+
+            if next_screen == 1:
+                game_over_screen(clock, FPS, 1, screen)
+                next_screen = "menü"
+            elif next_screen == 2:
+                game_over_screen(clock, FPS, 2, screen)
+                next_screen = "menü"
 
 
 if __name__ == "__main__":
