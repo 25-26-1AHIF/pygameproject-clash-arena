@@ -109,8 +109,9 @@ def main(screens, screen, SV, clock, FPS):
             else:
                 player_1 = player_tuple[0]
                 player_2 = player_tuple[1]
+                filepath = player_tuple[2]
 
-                next_screen = screens.play_screen(player_1, player_2)
+                next_screen = screens.play_screen(player_1, player_2, filepath)
 
         elif next_screen == "menü":
             next_screen = screens.menu()
@@ -164,7 +165,9 @@ def main(screens, screen, SV, clock, FPS):
                 player_2.change_x_pos()
                 player_2.change_last_direction()
 
-            next_screen = screens.play_screen(player_1, player_2)
+            filepath = screens.choose_background()
+
+            next_screen = screens.play_screen(player_1, player_2, filepath)
 
             if next_screen == 1:
                 game_over_screen(clock, FPS, 1, screen)
@@ -182,17 +185,6 @@ if __name__ == "__main__":
 
     screens = Screens(FPS, screen, clock, SV.width, SV.height, SV)
 
-    #player_1 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, 1, 2, FPS, clock)
-    #player_1.ypos -= player_1.size
-    #player_1.change_last_direction()
-
-    #player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, 2, 2, FPS, clock)
-    #player_2.ypos -= player_2.size
-    #player_2.change_x_pos()
-    #player_1.change_last_direction()
-
     main(screens, screen, SV, clock, FPS)
-
-    # screens.play_screen(player_1, player_2)
 
     pygame.quit()

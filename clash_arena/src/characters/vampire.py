@@ -332,7 +332,7 @@ class Vampire:
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
             blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
-                                                    "dark blue")
+                                                    "dark red")
 
             blood_rect = blood_text.get_rect(center=(290, 100))
 
@@ -341,7 +341,7 @@ class Vampire:
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
             blood_text = self.SV.FONT_SMALL.render(f"BLutlevel: {self.special_dict['blood level']}", True,
-                                                    "dark blue")
+                                                    "dark red")
 
             blood_rect = blood_text.get_rect(center=(self.screenwidth - 375, 100))
 

@@ -381,7 +381,7 @@ class Ninja:
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
-                                                    "dark blue")
+                                                    "dark red")
 
             stars_rect = stars_text.get_rect(center=(290, 100))
 
@@ -390,7 +390,7 @@ class Ninja:
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
-                                                    "dark blue")
+                                                    "dark red")
 
             stars_rect = stars_text.get_rect(center=(self.screenwidth - 375, 100))
 

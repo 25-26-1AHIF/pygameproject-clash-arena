@@ -2,7 +2,7 @@
   {
     "player type": 1,
     "hp": 100,
-    "xpos": 469,
+    "xpos": 315,
     "ypos": 587,
     "special_dict": {
       "type": "Stab",
@@ -21,7 +21,7 @@
   {
     "player type": 2,
     "hp": 100,
-    "xpos": 1412,
+    "xpos": 999,
     "ypos": 587,
     "special_dict": {
       "type": "Ninja-Star",
@@ -32,5 +32,6 @@
       "ignore next": false
     },
     "name": ""
-  }
+  },
+  "assets/play_map2.png"
 ]

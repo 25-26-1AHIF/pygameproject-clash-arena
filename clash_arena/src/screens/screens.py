@@ -287,7 +287,9 @@ class Screens:
 
                 player_2.special_dict = player_2_dict['special_dict']
 
-            return player_1, player_2
+            background = dict_list[2]
+
+            return player_1, player_2, background
 
         except:
             self.error_message("Spielstand konnte nicht geladen werden!")
@@ -439,7 +441,7 @@ class Screens:
                     pygame.display.update()
 
 
-    def pausemenu(self, player_1, player_2):
+    def pausemenu(self, player_1, player_2, background):
 
         self.SV.init()
 
@@ -494,7 +496,7 @@ class Screens:
                                                 'special_dict': player_2.special_dict,
                                                 'name' : player_2.name}
 
-                            player_list: list = [save_player_1, save_player_2]
+                            player_list: list = [save_player_1, save_player_2, background]
 
                             with open("saved_game/saved_game.json", "w") as fp:
                                 json.dump(player_list, fp, indent=2)
@@ -526,9 +528,9 @@ class Screens:
 
             pygame.display.flip()
 
-    def play_screen(self, player_1, player_2) -> str|int:
+    def play_screen(self, player_1, player_2, background_filepath) -> str|int:
         pygame.display.set_caption("Clash Arena")
-        play_map = pygame.image.load("assets/play_map.png").convert()
+        play_map = pygame.image.load(background_filepath).convert()
 
         vs_text = self.SV.FONT_BIG.render("VS", True, "dark red")
         vs_rect = vs_text.get_rect(center=(self.screenwidth/2, 64))
@@ -549,7 +551,7 @@ class Screens:
             keys = pygame.key.get_pressed()
 
             if keys[pygame.K_ESCAPE]:
-                next_screen = self.pausemenu(player_1, player_2)
+                next_screen = self.pausemenu(player_1, player_2, background_filepath)
 
                 if next_screen == "menü":
                     return "menü"
@@ -741,6 +743,66 @@ class Screens:
             self.screen.blit(source=zurueck, dest=zurueck_rect)
 
             self.screen.blit(image, (0, 300))
+
+            pygame.display.flip()
+
+
+    def choose_background(self) -> str:
+        text = self.SV.FONT_MIDDLE.render(f"Map:", True, "dark red")
+        text_rect = text.get_rect(center=(self.screenwidth / 2, 150))
+
+        ninja_select = pygame.image.load("assets/ninja/ninja_select.png").convert()
+        ninja_rect = pygame.Rect(250, 300, 128 * 2, 128 * 2)
+        width, height = ninja_select.get_size()
+
+        ninja_hit_rect = pygame.Rect(250 + 128 / 2, 300 + 64, 128, 192)
+        scaled_ninja = pygame.transform.scale(ninja_select, (width * 2, height * 2))
+
+        knight_select = pygame.image.load("assets/knight/knight_select.png").convert()
+        knight_rect = pygame.Rect((self.screenwidth / 2 - 100), 270, 128 * 2.3, 128 * 2.3)
+        knight_hit_rect = pygame.Rect((self.screenwidth / 2 - 100) + 128 / 1.7, 270 + 102, 128, 192)
+
+        width, height = knight_select.get_size()
+        scaled_knight = pygame.transform.scale(knight_select, (width * 2.3, height * 2.3))
+
+        vampire_select = pygame.image.load("assets/vampire/vampire_select.png").convert()
+
+        vampire_rect = pygame.Rect(self.screenwidth - 350, 300, 128 * 2, 128 * 2)
+        vampire_hit_rect = pygame.Rect((self.screenwidth - 350) + 128 / 2, 300 + 64, 128, 192)
+
+        width, height = vampire_select.get_size()
+        scaled_vampire = pygame.transform.scale(vampire_select, (width * 2, height * 2))
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    if ninja_hit_rect.collidepoint(event.pos):
+                        print("ninja")
+                        return "assets/play_map2.png"
+
+                    if knight_hit_rect.collidepoint(event.pos):
+                        print("knight")
+                        return "assets/play_map.png"
+
+                    if vampire_hit_rect.collidepoint(event.pos):
+                        print("vampire")
+                        pass
+
+            self.screen.fill("black")
+
+            self.screen.blit(text, text_rect)
+
+            self.screen.blit(scaled_ninja, ninja_rect)
+            pygame.draw.rect(surface=self.screen, rect=ninja_hit_rect, color="white", width=1)
+
+            self.screen.blit(scaled_knight, knight_rect)
+            pygame.draw.rect(surface=self.screen, rect=knight_hit_rect, color="white", width=1)
+
+            self.screen.blit(scaled_vampire, vampire_rect)
+            pygame.draw.rect(surface=self.screen, rect=vampire_hit_rect, color="white", width=1)
 
             pygame.display.flip()
 
