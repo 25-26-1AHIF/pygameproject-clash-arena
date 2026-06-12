@@ -53,8 +53,6 @@ class Vampire:
                                    'xpos' : 0,
                                    'ypos' : 0}
 
-        self.name = ""
-
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
         self.punch_sound = pygame.mixer.Sound("assets/punch_sound.mp3")
 
@@ -312,15 +310,15 @@ class Vampire:
 
             if self.skip_next_punch == False:
 
-                # if self.blocking == False:
+                if self.blocking == False:
 
-                punch_rect = pygame.Rect(enemy.punch_dict['xpos'], enemy.punch_dict['ypos'], enemy.punch_dict['range'],enemy.punch_dict['range'])
+                    punch_rect = pygame.Rect(enemy.punch_dict['xpos'], enemy.punch_dict['ypos'], enemy.punch_dict['range'],enemy.punch_dict['range'])
                 #pygame.draw.rect(surface=self.screen, rect=self.hit_rect, color="white", width=1)
 
-                if punch_rect.colliderect(self.hit_rect):
-                    self.hp -= enemy.damage
-                    print(f"Spieler {self.player_type} wurde getroffen")
-                    self.skip_next_punch = True
+                    if punch_rect.colliderect(self.hit_rect):
+                        self.hp -= enemy.damage
+                        print(f"Spieler {self.player_type} wurde getroffen")
+                        self.skip_next_punch = True
 
         else:
             self.skip_next_punch = False
@@ -456,7 +454,7 @@ class Vampire:
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
-        elif self.animation_playing == "idle" and self.last_direction == "left":
+        else:
             self.idle_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         #pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
@@ -468,12 +466,6 @@ class Vampire:
                 self.punch_dict['xpos'] = self.xpos + self.size / 2 + 64
 
             self.punch_dict['ypos'] = self.ypos + self.size / 4 + 64
-
-            print()
-            print(self.ypos)
-            print(self.xpos)
-            print(self.punch_dict['xpos'])
-            print(self.punch_dict['ypos'])
 
             #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['width']), color="blue")
 

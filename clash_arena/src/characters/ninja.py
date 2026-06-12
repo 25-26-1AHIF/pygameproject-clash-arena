@@ -76,7 +76,6 @@ class Ninja:
                                    'damage': 5,
                                    'ignore next': False}
 
-        self.name = ""
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
 
         self.special_sound_effect = pygame.mixer.Sound("assets/ninja/ninja_star_sound_effect.mp3")
@@ -503,7 +502,7 @@ class Ninja:
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
-        elif self.animation_playing == "idle" and self.last_direction == "left":
+        else:
             self.idle_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         # pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
@@ -517,11 +516,7 @@ class Ninja:
 
             self.punch_dict['ypos'] = self.ypos + self.size / 4 + 64
 
-            print()
-            print(self.ypos)
-            print(self.xpos)
-            print(self.punch_dict['xpos'])
-            print(self.punch_dict['ypos'])
+
 
             #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['width']), color="blue")
 

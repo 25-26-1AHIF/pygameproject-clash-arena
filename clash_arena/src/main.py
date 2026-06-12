@@ -4,6 +4,7 @@ from characters.ninja import Ninja
 from characters.vampire import Vampire
 from characters.knight import Knight
 from screens.screens import Screens
+import json
 
 from screen_variables.screen_variables import ScreenVariables as SV
 
@@ -89,6 +90,21 @@ def menu(clock, FPS, screen):
 def main(screens, screen, SV, clock, FPS):
     next_screen: str = ""
 
+    try:
+        with open("leaderboard.json", "r") as fp:
+            leaderboard = json.load(fp)
+
+    except:
+        screens.error_message("Hinweis: Leaderboard konnte nicht geladen werden")
+
+        leaderboard: dict = {'ninja' : 0,
+                             'knight' : 0,
+                             'vampire' : 0}
+
+        with open("leaderboard.json", "w") as fp:
+            json.dump(leaderboard, fp)
+
+
     while True:
 
         if next_screen == "":
@@ -111,7 +127,28 @@ def main(screens, screen, SV, clock, FPS):
                 player_2 = player_tuple[1]
                 filepath = player_tuple[2]
 
-                next_screen = screens.play_screen(player_1, player_2, filepath)
+                winner = screens.play_screen(player_1, player_2, filepath)
+
+                if winner[0] == 1:
+                    game_over_screen(clock, FPS, 1, screen)
+
+                    leaderboard[winner[1]] += 1
+
+                    with open("leaderboard.json", "w") as fp:
+                        json.dump(leaderboard, fp)
+
+                elif winner[0] == 2:
+                    game_over_screen(clock, FPS, 2, screen)
+
+                    leaderboard[winner[1]] += 1
+
+                    with open("leaderboard.json", "w") as fp:
+                        json.dump(leaderboard, fp)
+
+                winner = ()
+                next_screen = "menü"
+
+                continue
 
         elif next_screen == "menü":
             next_screen = screens.menu()
@@ -167,14 +204,28 @@ def main(screens, screen, SV, clock, FPS):
 
             filepath = screens.choose_background()
 
-            next_screen = screens.play_screen(player_1, player_2, filepath)
+            winner = screens.play_screen(player_1, player_2, filepath)
 
-            if next_screen == 1:
+            if winner[0] == 1:
                 game_over_screen(clock, FPS, 1, screen)
-                next_screen = "menü"
-            elif next_screen == 2:
+
+                leaderboard[winner[1]] += 1
+
+                with open("leaderboard.json", "w") as fp:
+                    json.dump(leaderboard, fp)
+
+            elif winner[0] == 2:
                 game_over_screen(clock, FPS, 2, screen)
-                next_screen = "menü"
+
+                leaderboard[winner[1]] += 1
+
+                with open("leaderboard.json", "w") as fp:
+                    json.dump(leaderboard, fp)
+
+            winner = ()
+            next_screen = "menü"
+
+            continue
 
 
 if __name__ == "__main__":

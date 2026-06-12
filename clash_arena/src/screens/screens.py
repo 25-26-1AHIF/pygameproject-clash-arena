@@ -5,6 +5,25 @@ from clash_arena.src.characters.knight import Knight
 from clash_arena.src.characters.ninja import Ninja
 from clash_arena.src.characters.vampire import Vampire
 
+def sort(liste) -> list:
+    stoppen: bool = False
+
+    while stoppen == False:
+
+        stoppen = True
+        for index in range(len(liste[0: - 1])):
+            element = liste[index]
+            element_next = liste[index + 1]
+
+            if element[1] < element_next[1]:
+
+                liste[index] = element_next
+                liste[index + 1] = element
+
+                stoppen = False
+
+    return liste
+
 class Screens:
     def __init__(self, fps, screen, clock, screenwidth, screenheight, screenvariablen):
         self.FPS = fps
@@ -111,7 +130,7 @@ class Screens:
         steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark red")
         steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 670))
 
-        highscore_text = self.SV.FONT_MIDDLE.render("Highscores", True, "dark red")
+        highscore_text = self.SV.FONT_MIDDLE.render("Leaderboard", True, "dark red")
         highscore_rect = highscore_text.get_rect(center=(self.screenwidth/2, 760))
 
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
@@ -258,7 +277,7 @@ class Screens:
             else:
                 player_1 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
                 player_1.hp = player_1_dict['hp']
-                player_1,xpos = player_1_dict['xpos']
+                player_1.xpos = player_1_dict['xpos']
                 player_1.ypos -= player_1.size
 
                 player_1.special_dict = player_1_dict['special_dict']
@@ -486,15 +505,13 @@ class Screens:
                                                 'hp' : player_1.hp,
                                                 'xpos' : player_1.xpos,
                                                 'ypos' : player_2.ypos,
-                                                'special_dict' : player_1.special_dict,
-                                                'name' : player_1.name}
+                                                'special_dict' : player_1.special_dict}
 
                             save_player_2: dict = {'player type': player_2.player_type,
                                                 'hp': player_2.hp,
                                                 'xpos': player_2.xpos,
                                                 'ypos': player_2.ypos,
-                                                'special_dict': player_2.special_dict,
-                                                'name' : player_2.name}
+                                                'special_dict': player_2.special_dict}
 
                             player_list: list = [save_player_1, save_player_2, background]
 
@@ -528,7 +545,7 @@ class Screens:
 
             pygame.display.flip()
 
-    def play_screen(self, player_1, player_2, background_filepath) -> str|int:
+    def play_screen(self, player_1, player_2, background_filepath) -> str|tuple:
         pygame.display.set_caption("Clash Arena")
         play_map = pygame.image.load(background_filepath).convert()
 
@@ -572,10 +589,24 @@ class Screens:
             player_2.check_special_collision(player_1)
 
             if player_1.check_if_dead() == True:
-                return 2
+                if player_2.special_dict['type'] == "Ninja-Star":
+                    return 2, "ninja"
+
+                elif player_2.special_dict['type'] == "Stab":
+                    return 2, "knight"
+
+                else:
+                    return 2, "vampire"
 
             if player_2.check_if_dead() == True:
-                return 1
+                if player_1.special_dict['type'] == "Ninja-Star":
+                    return 1, "ninja"
+
+                elif player_1.special_dict['type'] == "Stab":
+                    return 1, "knight"
+
+                else:
+                    return 1, "vampire"
 
             pygame.display.flip()
 
@@ -585,12 +616,31 @@ class Screens:
 
         # PyGame sauber beenden (cleanup)
 
-    def highscores(self):
+    def highscores(self, leaderboard):
+
+        ninja_tuple = ("Ninja", leaderboard['ninja'])
+        knight_tuple = ("Knight", leaderboard['knight'])
+        vampire_tuple = ("Vampire", leaderboard['vampire'])
+
+        character_list = [ninja_tuple, knight_tuple, vampire_tuple]
+
+        character_list = sort(character_list)
+
+        print(character_list)
 
         background = pygame.image.load("assets/highscore_hintergrund.png")
 
         zurueck_text = self.SV.FONT_MIDDLE.render("Zurück zum Menü", True, "dark red")
         zurueck_rect = zurueck_text.get_rect(center=(self.screenwidth/2, 840))
+
+        nummer_1 = self.SV.FONT_BIG.render(f"{character_list[0][0]}: {character_list[0][1]} wins", True, "dark red")
+        nummer_1_rect = nummer_1.get_rect(center=(self.screenwidth/2, 300))
+
+        nummer_2 = self.SV.FONT_BIG.render(f"{character_list[1][0]}: {character_list[1][1]} wins", True, "dark red")
+        nummer_2_rect = nummer_2.get_rect(center=(self.screenwidth / 2, 400))
+
+        nummer_3 = self.SV.FONT_BIG.render(f"{character_list[2][0]}: {character_list[2][1]} wins", True, "dark red")
+        nummer_3_rect = nummer_3.get_rect(center=(self.screenwidth / 2, 500))
 
         while True:
 
@@ -606,6 +656,15 @@ class Screens:
             self.screen.blit(source=background, dest=(0,0))
 
             self.screen.blit(source=zurueck_text, dest=zurueck_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=nummer_1_rect, color="black")
+            self.screen.blit(source=nummer_1, dest=nummer_1_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=nummer_2_rect, color="black")
+            self.screen.blit(source=nummer_2, dest=nummer_2_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=nummer_3_rect, color="black")
+            self.screen.blit(source=nummer_3, dest=nummer_3_rect)
 
             pygame.display.flip()
 
@@ -789,7 +848,7 @@ class Screens:
 
                     if vampire_hit_rect.collidepoint(event.pos):
                         print("vampire")
-                        pass
+                        return "assets/play_map3.png"
 
             self.screen.fill("black")
 
@@ -810,6 +869,13 @@ class Screens:
 
     def menu(self) -> str:
 
+        try:
+            with open("leaderboard.json", "r") as fp:
+                leaderboard = json.load(fp)
+
+        except:
+            pass
+
         neuer_kampf_text = self.SV.FONT_MIDDLE.render("Neuer Kampf", True, "dark red")
         neuer_kampf_rect = neuer_kampf_text.get_rect(center=(self.screenwidth / 2, 490))
 
@@ -819,7 +885,7 @@ class Screens:
         steuerung_text = self.SV.FONT_MIDDLE.render("Steuerung", True, "dark red")
         steuerung_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 670))
 
-        highscore_text = self.SV.FONT_MIDDLE.render("Highscores", True, "dark red")
+        highscore_text = self.SV.FONT_MIDDLE.render("Leaderboard", True, "dark red")
         highscore_rect = highscore_text.get_rect(center=(self.screenwidth / 2, 760))
 
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
@@ -865,7 +931,14 @@ class Screens:
 
                     if highscore_rect.collidepoint(event.pos):
                         print("Highscores gedrückt")
-                        self.highscores()
+                        try:
+                            with open("leaderboard.json", "r") as fp:
+                                leaderboard = json.load(fp)
+
+                            self.highscores(leaderboard)
+
+                        except:
+                            self.error_message("Fehler: Leaderboard konnte nicht geladen werden")
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
