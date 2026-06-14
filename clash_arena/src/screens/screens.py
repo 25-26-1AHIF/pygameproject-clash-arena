@@ -15,7 +15,7 @@ def sort(liste) -> list:
             element = liste[index]
             element_next = liste[index + 1]
 
-            if element[1] < element_next[1]:
+            if element < element_next:
 
                 liste[index] = element_next
                 liste[index + 1] = element
@@ -118,6 +118,55 @@ class Screens:
             pygame.display.flip()
 
 
+
+    # KI-Anfang
+    # KI: Claude Code
+    # Prompt: füge zu dem spiel hinzu, dass nach den charakter-auswahlen, immer ein screen kommt, um den namen des spielers einzugeben. Also: man wählt seinen charakter aus, dann muss man seinen namen eingeben. Markiere den anfang von allem, was du änderst mit "# KI-Anfang" und das ende mit "# KI-Ende"
+    def enter_name(self, player: int) -> str:
+
+        name = ""
+
+        prompt_text = self.SV.FONT_MIDDLE.render(f"Spieler {player}: Gib deinen Namen ein", True, "dark red")
+        prompt_rect = prompt_text.get_rect(center=(self.screenwidth/2, 150))
+
+        hinweis_text = self.SV.FONT_SMALL.render("Drücke Enter zum Bestätigen", True, "dark red")
+        hinweis_rect = hinweis_text.get_rect(center=(self.screenwidth/2, 700))
+
+        input_rect = pygame.Rect(self.screenwidth/2 - 300, 400, 600, 80)
+
+        while True:
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.QUIT:
+                    return f"Spieler {player}"
+
+                if event.type == pygame.KEYDOWN:
+
+                    if event.key == pygame.K_RETURN:
+                        if name.strip() == "":
+                            return f"Spieler {player}"
+                        return name
+
+                    elif event.key == pygame.K_BACKSPACE:
+                        name = name[:-1]
+
+                    elif event.unicode.isprintable() and len(name) < 15:
+                        name += event.unicode
+
+            self.screen.fill("black")
+
+            self.screen.blit(prompt_text, prompt_rect)
+            self.screen.blit(hinweis_text, hinweis_rect)
+
+            pygame.draw.rect(surface=self.screen, rect=input_rect, color="white", width=2)
+
+            name_text = self.SV.FONT_MIDDLE.render(name, True, "white")
+            name_rect = name_text.get_rect(center=input_rect.center)
+            self.screen.blit(name_text, name_rect)
+
+            pygame.display.flip()
+    # KI-Ende
 
     def draw_menu(self):
 
@@ -263,8 +312,8 @@ class Screens:
                 player_1.hp = player_1_dict['hp']
                 player_1.xpos = player_1_dict['xpos']
                 player_1.ypos -= player_1.size
-
                 player_1.special_dict = player_1_dict['special_dict']
+                player_1.name = player_1_dict['name']
 
             elif player_1_dict['special_dict']['type'] == "Stab":
                 player_1 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
@@ -273,6 +322,7 @@ class Screens:
                 player_1.ypos -= player_1.size
 
                 player_1.special_dict = player_1_dict['special_dict']
+                player_1.name = player_1_dict['name']
 
             else:
                 player_1 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_1_dict['player type'], 2, FPS, clock)
@@ -281,6 +331,7 @@ class Screens:
                 player_1.ypos -= player_1.size
 
                 player_1.special_dict = player_1_dict['special_dict']
+                player_1.name = player_1_dict['name']
 
             if player_2_dict['special_dict']['type'] == "Ninja-Star":
                 player_2 = Ninja(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'], 2, FPS, clock)
@@ -288,6 +339,7 @@ class Screens:
                 player_2.xpos = player_2_dict['xpos']
                 player_2.ypos -= player_2.size
                 player_2.special_dict = player_2_dict['special_dict']
+                player_2.name = player_2_dict['name']
 
             elif player_2_dict['special_dict']['type'] == "Stab":
                 player_2 = Knight(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'], 2, FPS, clock)
@@ -296,6 +348,7 @@ class Screens:
                 player_2.ypos -= player_2.size
 
                 player_2.special_dict = player_2_dict['special_dict']
+                player_2.name = player_2_dict['name']
 
             else:
                 player_2 = Vampire(screen, SV.width, SV.height, 0, SV.height - 100, 128, player_2_dict['player type'],
@@ -305,6 +358,7 @@ class Screens:
                 player_2.ypos -= player_2.size
 
                 player_2.special_dict = player_2_dict['special_dict']
+                player_2.name = player_2_dict['name']
 
             background = dict_list[2]
 
@@ -505,13 +559,15 @@ class Screens:
                                                 'hp' : player_1.hp,
                                                 'xpos' : player_1.xpos,
                                                 'ypos' : player_2.ypos,
-                                                'special_dict' : player_1.special_dict}
+                                                'special_dict' : player_1.special_dict,
+                                                'name' : player_1.name}
 
                             save_player_2: dict = {'player type': player_2.player_type,
                                                 'hp': player_2.hp,
                                                 'xpos': player_2.xpos,
                                                 'ypos': player_2.ypos,
-                                                'special_dict': player_2.special_dict}
+                                                'special_dict': player_2.special_dict,
+                                                'name' : player_2.name}
 
                             player_list: list = [save_player_1, save_player_2, background]
 
@@ -590,23 +646,23 @@ class Screens:
 
             if player_1.check_if_dead() == True:
                 if player_2.special_dict['type'] == "Ninja-Star":
-                    return 2, "ninja"
+                    return player_2.name
 
                 elif player_2.special_dict['type'] == "Stab":
-                    return 2, "knight"
+                    return player_2.name
 
                 else:
-                    return 2, "vampire"
+                    return player_2.name
 
             if player_2.check_if_dead() == True:
                 if player_1.special_dict['type'] == "Ninja-Star":
-                    return 1, "ninja"
+                    return player_1.name
 
                 elif player_1.special_dict['type'] == "Stab":
-                    return 1, "knight"
+                    return player_1.name
 
                 else:
-                    return 1, "vampire"
+                    return player_1.name
 
             pygame.display.flip()
 
@@ -618,29 +674,29 @@ class Screens:
 
     def highscores(self, leaderboard):
 
-        ninja_tuple = ("Ninja", leaderboard['ninja'])
-        knight_tuple = ("Knight", leaderboard['knight'])
-        vampire_tuple = ("Vampire", leaderboard['vampire'])
-
-        character_list = [ninja_tuple, knight_tuple, vampire_tuple]
-
-        character_list = sort(character_list)
-
-        print(character_list)
-
         background = pygame.image.load("assets/highscore_hintergrund.png")
 
         zurueck_text = self.SV.FONT_MIDDLE.render("Zurück zum Menü", True, "dark red")
-        zurueck_rect = zurueck_text.get_rect(center=(self.screenwidth/2, 840))
+        zurueck_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 840))
 
-        nummer_1 = self.SV.FONT_BIG.render(f"{character_list[0][0]}: {character_list[0][1]} wins", True, "dark red")
-        nummer_1_rect = nummer_1.get_rect(center=(self.screenwidth/2, 300))
+        character_list: list = []
 
-        nummer_2 = self.SV.FONT_BIG.render(f"{character_list[1][0]}: {character_list[1][1]} wins", True, "dark red")
-        nummer_2_rect = nummer_2.get_rect(center=(self.screenwidth / 2, 400))
+        # KI-Anfang
+        # KI: ChatGPT
+        # prompt: wie kann ich in python mit einer for-schleife durch ein dictionary gehen, und dabei die keys und values als variablen bekommen?
+        for idx, (key, value) in enumerate(leaderboard.items()):
 
-        nummer_3 = self.SV.FONT_BIG.render(f"{character_list[2][0]}: {character_list[2][1]} wins", True, "dark red")
-        nummer_3_rect = nummer_3.get_rect(center=(self.screenwidth / 2, 500))
+            if idx >= 5:
+                break
+
+            try:
+                character_list.append((key, value))
+
+            except:
+                break
+        # KI-Ende
+
+        character_list = sort(character_list)
 
         while True:
 
@@ -652,19 +708,16 @@ class Screens:
                         return
 
             self.screen.fill("black")
-
             self.screen.blit(source=background, dest=(0,0))
+
+            for i in range(0, len(character_list) * 100, 100):
+                text = self.SV.FONT_MIDDLE.render(f"{character_list[i//100][0]}: {character_list[i//100][1]} wins", True, "dark red")
+                text_rect = text.get_rect(center=(self.screenwidth/2, 300 +i ))
+                self.screen.blit(source=text, dest=text_rect)
 
             self.screen.blit(source=zurueck_text, dest=zurueck_rect)
 
-            pygame.draw.rect(surface=self.screen, rect=nummer_1_rect, color="black")
-            self.screen.blit(source=nummer_1, dest=nummer_1_rect)
 
-            pygame.draw.rect(surface=self.screen, rect=nummer_2_rect, color="black")
-            self.screen.blit(source=nummer_2, dest=nummer_2_rect)
-
-            pygame.draw.rect(surface=self.screen, rect=nummer_3_rect, color="black")
-            self.screen.blit(source=nummer_3, dest=nummer_3_rect)
 
             pygame.display.flip()
 
@@ -931,14 +984,14 @@ class Screens:
 
                     if highscore_rect.collidepoint(event.pos):
                         print("Highscores gedrückt")
-                        try:
-                            with open("leaderboard.json", "r") as fp:
-                                leaderboard = json.load(fp)
+                        #try:
+                        with open("leaderboard.json", "r") as fp:
+                            leaderboard = json.load(fp)
 
-                            self.highscores(leaderboard)
+                        self.highscores(leaderboard)
 
-                        except:
-                            self.error_message("Fehler: Leaderboard konnte nicht geladen werden")
+                        #except:
+                            #self.error_message("Fehler: Leaderboard konnte nicht geladen werden")
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)

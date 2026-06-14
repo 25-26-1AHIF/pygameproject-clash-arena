@@ -1,8 +1,8 @@
 [
   {
     "player type": 1,
-    "hp": 80,
-    "xpos": 336,
+    "hp": 100,
+    "xpos": 364,
     "ypos": 587,
     "special_dict": {
       "type": "Stab",
@@ -15,25 +15,23 @@
       "ypos": 0,
       "range": 48,
       "counter": 0
-    }
+    },
+    "name": "nevio"
   },
   {
     "player type": 2,
     "hp": 100,
-    "xpos": 831,
+    "xpos": 1237,
     "ypos": 587,
     "special_dict": {
-      "type": "Blood-Suck",
-      "used": false,
+      "type": "Ninja-Star",
       "list": [],
-      "blood level": 40,
-      "damage": 10,
-      "ignore next": false,
-      "counter": 0,
-      "range": 48,
-      "xpos": 371,
-      "ypos": 715.0
-    }
+      "used": false,
+      "stars-left": 10,
+      "damage": 5,
+      "ignore next": false
+    },
+    "name": "nevio"
   },
-  "assets/play_map.png"
+  "assets/play_map2.png"
 ]

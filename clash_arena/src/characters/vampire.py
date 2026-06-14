@@ -53,6 +53,8 @@ class Vampire:
                                    'xpos' : 0,
                                    'ypos' : 0}
 
+        self.name = ""
+
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
         self.punch_sound = pygame.mixer.Sound("assets/punch_sound.mp3")
 
@@ -329,6 +331,8 @@ class Vampire:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (128, 28))
             blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
                                                     "dark red")
 
@@ -338,6 +342,8 @@ class Vampire:
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (self.screenwidth - 532, 28))
             blood_text = self.SV.FONT_SMALL.render(f"BLutlevel: {self.special_dict['blood level']}", True,
                                                     "dark red")
 

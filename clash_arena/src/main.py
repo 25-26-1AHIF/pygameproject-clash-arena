@@ -97,9 +97,7 @@ def main(screens, screen, SV, clock, FPS):
     except:
         screens.error_message("Hinweis: Leaderboard konnte nicht geladen werden")
 
-        leaderboard: dict = {'ninja' : 0,
-                             'knight' : 0,
-                             'vampire' : 0}
+        leaderboard: dict = {}
 
         with open("leaderboard.json", "w") as fp:
             json.dump(leaderboard, fp)
@@ -182,6 +180,12 @@ def main(screens, screen, SV, clock, FPS):
                 player_1.ypos -= player_1.size
                 player_1.change_last_direction()
 
+            # KI-Anfang
+            # KI: Claude Code
+            # Prompt: füge zu dem spiel hinzu, dass nach den charakter-auswahlen, immer ein screen kommt, um den namen des spielers einzugeben. Also: man wählt seinen charakter aus, dann muss man seinen namen eingeben. Markiere den anfang von allem, was du änderst mit "# KI-Anfang" und das ende mit "# KI-Ende"
+            player_1.name = screens.enter_name(1)
+            # KI-Ende
+
             character_2 = screens.choose_character(2)
 
             if character_2 == "ninja":
@@ -202,27 +206,29 @@ def main(screens, screen, SV, clock, FPS):
                 player_2.change_x_pos()
                 player_2.change_last_direction()
 
+            # KI-Anfang
+            # KI: Claude Code
+            # Prompt: füge zu dem spiel hinzu, dass nach den charakter-auswahlen, immer ein screen kommt, um den namen des spielers einzugeben. Also: man wählt seinen charakter aus, dann muss man seinen namen eingeben. Markiere den anfang von allem, was du änderst mit "# KI-Anfang" und das ende mit "# KI-Ende"
+            player_2.name = screens.enter_name(2)
+            # KI-Ende
+
             filepath = screens.choose_background()
 
             winner = screens.play_screen(player_1, player_2, filepath)
 
-            if winner[0] == 1:
-                game_over_screen(clock, FPS, 1, screen)
+            if winner != "menü":
+                game_over_screen(clock, FPS, winner, screen)
 
-                leaderboard[winner[1]] += 1
+                try:
+                    leaderboard[winner] += 1
 
-                with open("leaderboard.json", "w") as fp:
-                    json.dump(leaderboard, fp)
-
-            elif winner[0] == 2:
-                game_over_screen(clock, FPS, 2, screen)
-
-                leaderboard[winner[1]] += 1
+                except:
+                    leaderboard[winner] = 1
 
                 with open("leaderboard.json", "w") as fp:
                     json.dump(leaderboard, fp)
 
-            winner = ()
+            winner = ""
             next_screen = "menü"
 
             continue

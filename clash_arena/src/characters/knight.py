@@ -54,6 +54,8 @@ class Knight:
                                    'range' : 48,
                                    'counter' : 0}
 
+        self.name = ""
+
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
         self.punch_sound = pygame.mixer.Sound("assets/knight/knight_punch_sound_effect.mp3")
         self.special_sound_effect = pygame.mixer.Sound("assets/knight/heavy_strike_sound_effect.mp3")
@@ -325,15 +327,18 @@ class Knight:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (128, 28))
             stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
-
             stars_rect = stars_text.get_rect(center=(290, 100))
 
             self.screen.blit(source = stars_text, dest = stars_rect)
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (self.screenwidth - 532, 28))
             stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
 

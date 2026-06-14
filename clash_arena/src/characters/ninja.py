@@ -76,6 +76,8 @@ class Ninja:
                                    'damage': 5,
                                    'ignore next': False}
 
+        self.name = ""
+
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
 
         self.special_sound_effect = pygame.mixer.Sound("assets/ninja/ninja_star_sound_effect.mp3")
@@ -379,6 +381,8 @@ class Ninja:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (128, 28))
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark red")
 
@@ -388,6 +392,8 @@ class Ninja:
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            self.screen.blit(name, (self.screenwidth - 532, 28))
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark red")
 
