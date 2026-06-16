@@ -315,7 +315,6 @@ class Knight:
 
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
-                        print(f"Spieler {self.player_type} wurde getroffen")
                         self.skip_next_punch = True
 
         else:
@@ -417,7 +416,6 @@ class Knight:
     def update_and_draw(self) -> str|None:
         self.inputs()
         self.punch()
-        rect = self.get_rect()
 
         if self.animation_playing == "walking right":
             self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)

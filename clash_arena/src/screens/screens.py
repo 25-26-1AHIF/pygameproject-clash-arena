@@ -15,7 +15,7 @@ def sort(liste) -> list:
             element = liste[index]
             element_next = liste[index + 1]
 
-            if element < element_next:
+            if element[1] < element_next[1]:
 
                 liste[index] = element_next
                 liste[index + 1] = element
@@ -601,7 +601,7 @@ class Screens:
 
             pygame.display.flip()
 
-    def play_screen(self, player_1, player_2, background_filepath) -> str|tuple:
+    def play_screen(self, player_1, player_2, background_filepath) -> str:
         pygame.display.set_caption("Clash Arena")
         play_map = pygame.image.load(background_filepath).convert()
 
@@ -688,10 +688,8 @@ class Screens:
 
             if idx >= 5:
                 break
-
             try:
                 character_list.append((key, value))
-
             except:
                 break
         # KI-Ende

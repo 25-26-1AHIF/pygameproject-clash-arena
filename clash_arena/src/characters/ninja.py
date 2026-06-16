@@ -369,7 +369,6 @@ class Ninja:
 
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
-                        print(f"Spieler {self.player_type} wurde getroffen")
                         self.skip_next_punch = True
 
         else:
