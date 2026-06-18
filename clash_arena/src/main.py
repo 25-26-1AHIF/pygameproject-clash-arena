@@ -13,6 +13,9 @@ def game_over_screen(clock, FPS, winner, screen):
     game_over_text = SV.FONT_BIG.render(f"Spieler {winner} gewinnt!", True, "dark red")
     game_over_rect = game_over_text.get_rect(center=(SV.width / 2, SV.height / 2))
 
+    text2 = SV.FONT_BIG.render(f"+10 xp!", True, "dark red")
+    rect2 = game_over_text.get_rect(center=(SV.width / 2, SV.height / 2 + 100))
+
     menu_text = SV.FONT_MIDDLE.render("Zurück zum Menü", True, "dark red")
     menu_text_rect = menu_text.get_rect(center=(SV.width/2, SV.height - 100))
 
@@ -42,6 +45,7 @@ def game_over_screen(clock, FPS, winner, screen):
 
         screen.blit(source=game_over_text, dest = game_over_rect)
         pygame.draw.rect(surface=screen, rect=menu_text_rect, color="black")
+        screen.blit(source=text2, dest=rect2)
         screen.blit(source=menu_text, dest = menu_text_rect)
 
         # Das Display updaten
@@ -220,19 +224,21 @@ def main(screens, screen, SV, clock, FPS):
                 game_over_screen(clock, FPS, winner, screen)
 
                 try:
-                    leaderboard[winner] += 1
+                    leaderboard[winner][1] += 10
+
+                    if leaderboard[winner][1] >= 100 * leaderboard[winner][0]:
+                        leaderboard[winner][1] = 0
+                        leaderboard[winner][0] += 1
 
                 except:
-                    leaderboard[winner] = 1
+                    leaderboard[winner] = [1, 10]
 
                 with open("leaderboard.json", "w") as fp:
                     json.dump(leaderboard, fp)
 
             winner = ""
             next_screen = "menü"
-
             continue
-
 
 if __name__ == "__main__":
     SV.init()

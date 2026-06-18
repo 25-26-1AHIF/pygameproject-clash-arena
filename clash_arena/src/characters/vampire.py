@@ -441,23 +441,23 @@ class Vampire:
         elif self.blocking == True and self.last_direction == "right":
             self.block_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
+        elif self.blocking == True and self.last_direction == "left":
+            self.block_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
         elif self.jumping == True and self.last_direction == "right":
             self.jump_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.jumping == True and self.last_direction == "left":
             self.jump_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
-        elif self.blocking == True and self.last_direction == "left":
-            self.block_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
-
-        elif self.animation_playing == "idle" and self.last_direction == "right":
-            self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
-
         elif self.special_dict['used'] == True and self.last_direction == "right":
             self.special_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "idle" and self.last_direction == "right":
+            self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         else:
             self.idle_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)

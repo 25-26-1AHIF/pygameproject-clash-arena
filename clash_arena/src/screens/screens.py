@@ -15,7 +15,7 @@ def sort(liste) -> list:
             element = liste[index]
             element_next = liste[index + 1]
 
-            if element[1] < element_next[1]:
+            if element[1][0] < element_next[1][0]:
 
                 liste[index] = element_next
                 liste[index + 1] = element
@@ -709,7 +709,7 @@ class Screens:
             self.screen.blit(source=background, dest=(0,0))
 
             for i in range(0, len(character_list) * 100, 100):
-                text = self.SV.FONT_MIDDLE.render(f"{character_list[i//100][0]}: {character_list[i//100][1]} wins", True, "dark red")
+                text = self.SV.FONT_MIDDLE.render(f"{character_list[i//100][0]}: Level {character_list[i//100][1][0]}", True, "dark red")
                 text_rect = text.get_rect(center=(self.screenwidth/2, 300 +i ))
                 self.screen.blit(source=text, dest=text_rect)
 

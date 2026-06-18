@@ -262,6 +262,7 @@ class Knight:
                     self.special_dict['used'] = True
                     self.special_dict['durability'] -= 1
                     self.special_sound_effect.play()
+                    self.frame_counter = 0
 
             else:
                 if self.animation_playing != "idle":
@@ -291,10 +292,10 @@ class Knight:
              self.special_dict['counter'] += 1
 
              if self.last_direction == "right":
-                 self.special_dict['xpos'] = self.xpos + self.size
+                 self.special_dict['xpos'] = self.xpos + 128
 
              elif self.last_direction == "left":
-                 self.special_dict['xpos'] = self.xpos - self.special_dict['range']
+                 self.special_dict['xpos'] = self.xpos + 128 + 16
 
         else:
             return
@@ -432,23 +433,23 @@ class Knight:
         elif self.blocking == True and self.last_direction == "right":
             self.block_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
+        elif self.blocking == True and self.last_direction == "left":
+            self.block_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
         elif self.jumping == True and self.last_direction == "right":
             self.jump_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.jumping == True and self.last_direction == "left":
             self.jump_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
-        elif self.blocking == True and self.last_direction == "left":
-            self.block_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
-
-        elif self.animation_playing == "idle" and self.last_direction == "right":
-            self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
-
         elif self.special_dict['used'] == True and self.last_direction == "right":
             self.special_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "idle" and self.last_direction == "right":
+            self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         else:
             self.idle_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
@@ -483,7 +484,7 @@ class Knight:
             self.special_dict['ypos'] = self.ypos + self.size / 4 + 96
 
 
-            #pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
+            # pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
 
         self.draw_healthbar()
 
