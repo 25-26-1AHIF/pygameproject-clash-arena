@@ -17,7 +17,7 @@ class Star:
 
         self.xpos += self.speed
 
-        pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="yellow")
+        #pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="yellow")
 
         if self.xpos <= 0 - self.size:
             special_dict['list'].pop(0)
@@ -134,6 +134,14 @@ class Ninja:
         self.special_right_animation = Sprite(filepath="assets/ninja/special.png", image_count=6,
                                              image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
         self.special_right_animation.load_spritesheet(2, False)
+
+        self.star_right_animation = Sprite(filepath="assets/ninja/stern_ninja.png", image_count=4,
+                                     image_rect=pygame.Rect(0, 0, 32, 32), animation_speed=8)
+        self.star_right_animation.load_spritesheet(2, False)
+
+        self.star_left_animation = Sprite(filepath="assets/ninja/stern_ninja.png", image_count=4,
+                                           image_rect=pygame.Rect(0, 0, 32, 32), animation_speed=8)
+        self.star_left_animation.load_spritesheet(2, True)
 
 
         self.animation_playing = ""
@@ -474,13 +482,8 @@ class Ninja:
         rect = self.get_rect()
 
 
-        if self.animation_playing == "walking right":
-            self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
-        elif self.animation_playing == "walking left":
-            self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
-
-        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
+        if self.punch_dict['thrown'] == True and self.last_direction == "right":
             self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":
@@ -500,9 +503,18 @@ class Ninja:
 
         elif self.special_dict['used'] == True and self.last_direction == "right":
             self.special_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+            self.star_right_animation.draw(self.screen, self.special_dict['list'][0].xpos, self.special_dict['list'][0].ypos, self.frame_counter)
 
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+            self.star_left_animation.draw(self.screen, self.special_dict['list'][0].xpos, self.special_dict['list'][0].ypos, self.frame_counter)
+
+        elif self.animation_playing == "walking right":
+            self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "walking left":
+            self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+
 
         elif self.animation_playing == "idle" and self.last_direction == "right":
             self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)

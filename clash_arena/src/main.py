@@ -102,7 +102,6 @@ def main(screens, screen, SV, clock, FPS):
         screens.error_message("Hinweis: Leaderboard konnte nicht geladen werden")
 
         leaderboard: dict = {}
-
         with open("leaderboard.json", "w") as fp:
             json.dump(leaderboard, fp)
 
@@ -245,9 +244,7 @@ if __name__ == "__main__":
     FPS = SV.FPS
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode((SV.width, SV.height))
-
     screens = Screens(FPS, screen, clock, SV.width, SV.height, SV)
 
     main(screens, screen, SV, clock, FPS)
-
     pygame.quit()

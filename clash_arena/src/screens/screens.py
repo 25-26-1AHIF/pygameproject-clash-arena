@@ -185,18 +185,19 @@ class Screens:
         beenden_text = self.SV.FONT_MIDDLE.render("Beenden", True, "dark red")
         beenden_rect = steuerung_text.get_rect(center=(self.screenwidth / 2, 840))
 
-        #pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="black")
+        pygame.draw.rect(surface=self.screen, rect=neuer_kampf_rect, color="black")
         self.screen.blit(source=neuer_kampf_text, dest=neuer_kampf_rect)
 
-        #pygame.draw.rect(surface=self.screen, rect=kampf_laden_rect, color="black")
+        pygame.draw.rect(surface=self.screen, rect=kampf_laden_rect, color="black")
         self.screen.blit(source=kampf_laden_text, dest=kampf_laden_rect)
 
-        #pygame.draw.rect(surface=self.screen, rect=steuerung_rect, color="black")
+        pygame.draw.rect(surface=self.screen, rect=steuerung_rect, color="black")
         self.screen.blit(source=steuerung_text, dest=steuerung_rect)
 
-        #pygame.draw.rect(surface=self.screen, rect=beenden_rect, color="black")
+        pygame.draw.rect(surface=self.screen, rect=beenden_rect, color="black")
         self.screen.blit(source=beenden_text, dest=beenden_rect)
 
+        pygame.draw.rect(surface=self.screen, rect=highscore_rect, color="black")
         self.screen.blit(source=highscore_text, dest=highscore_rect)
 
     def todo(self) -> str:
@@ -510,9 +511,7 @@ class Screens:
                     pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
 
-
                     pygame.display.update()
-
 
     def pausemenu(self, player_1, player_2, background):
 
@@ -982,14 +981,15 @@ class Screens:
 
                     if highscore_rect.collidepoint(event.pos):
                         print("Highscores gedrückt")
-                        #try:
-                        with open("leaderboard.json", "r") as fp:
-                            leaderboard = json.load(fp)
 
-                        self.highscores(leaderboard)
+                        try:
+                            with open("leaderboard.json", "r") as fp:
+                                leaderboard = json.load(fp)
 
-                        #except:
-                            #self.error_message("Fehler: Leaderboard konnte nicht geladen werden")
+                            self.highscores(leaderboard)
+
+                        except:
+                            self.error_message("Fehler: Leaderboard konnte nicht geladen werden")
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
@@ -998,7 +998,6 @@ class Screens:
                         return "beenden"
 
             self.screen.fill("white")
-
             self.screen.blit(hintergrund, (0, 0))
 
             self.draw_menu()

@@ -426,13 +426,7 @@ class Vampire:
         self.punch()
         rect = self.get_rect()
 
-        if self.animation_playing == "walking right":
-            self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
-
-        elif self.animation_playing == "walking left":
-            self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
-
-        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
+        if self.punch_dict['thrown'] == True and self.last_direction == "right":
             self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":
@@ -455,6 +449,12 @@ class Vampire:
 
         elif self.special_dict['used'] == True and self.last_direction == "left":
             self.special_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "walking right":
+            self.walk_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+
+        elif self.animation_playing == "walking left":
+            self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
 
         elif self.animation_playing == "idle" and self.last_direction == "right":
             self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
