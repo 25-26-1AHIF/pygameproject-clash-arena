@@ -2,6 +2,51 @@ import pygame
 from clash_arena.src.screen_variables.screen_variables import ScreenVariables
 from clash_arena.src.sprite.sprite import Sprite
 
+class Bat:
+    def __init__(self, size, xpos, ypos, damage, speed, screen):
+        self.size = size
+        self.xpos = xpos
+        self.ypos = ypos
+        self.damage = damage
+        self.speed = speed
+        self.screen = screen
+        self.counter = 0
+        self.animation = Sprite(filepath="assets/vampire/bat_spritesheet.png", image_count=5,
+                                image_rect=pygame.Rect(0, 0, size, size), animation_speed=8)
+        self.animation.load_spritesheet(1, False)
+        self.frame_counter = 0
+        self.alive = False
+
+    def update(self, enemy):
+
+        if self.alive == True:
+            if enemy.hit_rect.x > self.xpos:
+                self.xpos += self.speed
+
+            elif enemy.hit_rect.x < self.xpos:
+                self.xpos -= self.speed
+
+            if enemy.hit_rect.y > self.ypos:
+                self.ypos += self.speed
+
+            elif enemy.hit_rect.y < self.ypos:
+                self.ypos -= self.speed
+
+            if self.counter >= 240:
+                self.counter = 0
+
+            else:
+                self.counter += 1
+                self.animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+
+            rect = pygame.Rect(self.xpos, self.ypos, self.size, self.size)
+
+            if rect.colliderect(enemy.hit_rect):
+                enemy.hp -= self.damage
+                self.alive = False
+
+            self.frame_counter += 1
+
 class Vampire:
     def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps, clock):
         self.screen = screen
@@ -54,6 +99,9 @@ class Vampire:
                                    'ypos' : 0}
 
         self.name = ""
+        self.bat = Bat(15, self.xpos, self.ypos - 50, 10, 2, self.screen)
+        self.ult_bar = 0
+
 
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
         self.punch_sound = pygame.mixer.Sound("assets/punch_sound.mp3")
@@ -182,6 +230,16 @@ class Vampire:
                     self.frame_counter = 0
                     self.animation_playing = "jump"
 
+            elif pressed_keys[pygame.K_s]:
+                if self.bat.alive == True:
+                    pass
+                elif self.ult_bar < 100:
+                    pass
+                else:
+                    self.ult_bar = 0
+                    self.bat.alive = True
+                    self.bat.xpos = self.xpos
+                    self.bat.ypos = self.ypos - 50
 
             elif pressed_keys[pygame.K_q]:
                 if self.special_dict['used'] == True:
@@ -320,7 +378,8 @@ class Vampire:
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
                         self.skip_next_punch = True
-
+                        if enemy.ult_bar < 100:
+                            enemy.ult_bar += 5
         else:
             self.skip_next_punch = False
 
@@ -330,8 +389,11 @@ class Vampire:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(132, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (128, 28))
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (132, 128))
             blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
                                                     "dark red")
 
@@ -341,8 +403,11 @@ class Vampire:
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(self.screenwidth-532, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (self.screenwidth - 532, 28))
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (self.screenwidth-532, 128))
             blood_text = self.SV.FONT_SMALL.render(f"BLutlevel: {self.special_dict['blood level']}", True,
                                                     "dark red")
 
@@ -417,11 +482,7 @@ class Vampire:
             else:
                 self.special_dict['ignore next'] = False
 
-
-
-
-
-    def update_and_draw(self) -> str|None:
+    def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
         rect = self.get_rect()
@@ -487,6 +548,7 @@ class Vampire:
                                 #self.special_dict['range']), color="green")
 
         self.draw_healthbar()
+        self.bat.update(enemy)
 
         if self.jumping == True:
             self.jump()

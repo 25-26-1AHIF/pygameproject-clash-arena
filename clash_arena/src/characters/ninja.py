@@ -75,7 +75,7 @@ class Ninja:
                                    'stars-left': 10,
                                    'damage': 5,
                                    'ignore next': False}
-
+        self.ult_bar = 0
         self.name = ""
 
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
@@ -378,7 +378,8 @@ class Ninja:
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
                         self.skip_next_punch = True
-
+                        if enemy.ult_bar < 100:
+                            enemy.ult_bar += 5
         else:
             self.skip_next_punch = False
 
@@ -476,7 +477,7 @@ class Ninja:
                 self.special_dict['ignore next'] = False
 
 
-    def update_and_draw(self) -> str|None:
+    def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
         rect = self.get_rect()

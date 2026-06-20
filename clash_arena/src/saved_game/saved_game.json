@@ -2,7 +2,7 @@
   {
     "player type": 1,
     "hp": 100,
-    "xpos": 364,
+    "xpos": 343,
     "ypos": 587,
     "special_dict": {
       "type": "Stab",
@@ -16,12 +16,12 @@
       "range": 48,
       "counter": 0
     },
-    "name": "nevio"
+    "name": "Nevio"
   },
   {
     "player type": 2,
     "hp": 100,
-    "xpos": 1237,
+    "xpos": 1083,
     "ypos": 587,
     "special_dict": {
       "type": "Ninja-Star",
@@ -31,7 +31,7 @@
       "damage": 5,
       "ignore next": false
     },
-    "name": "nevio"
+    "name": "Nigger"
   },
   "assets/play_map2.png"
 ]

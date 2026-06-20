@@ -53,7 +53,7 @@ class Knight:
                                    'ypos' : 0,
                                    'range' : 48,
                                    'counter' : 0}
-
+        self.ult_bar = 0
         self.name = ""
 
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
@@ -317,7 +317,8 @@ class Knight:
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
                         self.skip_next_punch = True
-
+                        if enemy.ult_bar < 100:
+                            enemy.ult_bar += 5
         else:
             self.skip_next_punch = False
 
@@ -414,7 +415,7 @@ class Knight:
 
 
 
-    def update_and_draw(self) -> str|None:
+    def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
 

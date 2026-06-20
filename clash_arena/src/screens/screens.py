@@ -634,8 +634,8 @@ class Screens:
             self.screen.blit(play_map, (0, 0))
             self.screen.blit(source=vs_text, dest=vs_rect)
 
-            player_1.update_and_draw()
-            player_2.update_and_draw()
+            player_1.update_and_draw(player_2)
+            player_2.update_and_draw(player_1)
 
             player_1.check_punch_collision(player_2)
             player_2.check_punch_collision(player_1)
