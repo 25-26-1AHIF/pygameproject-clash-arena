@@ -10,6 +10,7 @@ class Knight:
         self.screenheight = screenheight
 
         self.counter = 0
+        self.ignore = False
 
         self.punch_dict: dict = {"thrown" : False,
                             "range": 48,
@@ -53,6 +54,9 @@ class Knight:
                                    'ypos' : 0,
                                    'range' : 48,
                                    'counter' : 0}
+
+        self.ult = False
+        self.ult_counter = 0
         self.ult_bar = 0
         self.name = ""
 
@@ -113,6 +117,14 @@ class Knight:
         self.special_right_animation = Sprite(filepath="assets/knight/special.png", image_count=4,
                                               image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
         self.special_right_animation.load_spritesheet(2.5, False)
+
+        self.blitz = Sprite(filepath="assets/knight/blitz.png", image_count=5,
+                            image_rect=pygame.Rect(0, 0, 256, 512), animation_speed=8)
+        self.blitz.load_spritesheet(1, False)
+
+        self.charge = Sprite(filepath="assets/knight/attack_blitz_charge.png", image_count=5,
+                             image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=8)
+        self.charge.load_spritesheet(2.5, False)
 
         self.frame_counter = 0
 
@@ -183,6 +195,16 @@ class Knight:
                     self.frame_counter = 0
                     self.animation_playing = "jump"
 
+            elif pressed_keys[pygame.K_s]:
+
+                if self.blocking == True:
+                    pass
+                elif self.ult_bar < 100:
+                    pass
+                else:
+                    self.ult = True
+                    self.ult_bar = 0
+
             elif pressed_keys[pygame.K_q]:
                 if self.special_dict['used'] == True:
                     pass
@@ -248,6 +270,16 @@ class Knight:
                 else:
                     self.jumping = True
                     self.jump_sound.play()
+
+            elif pressed_keys[pygame.K_k]:
+
+                if self.blocking == True:
+                    pass
+                elif self.ult_bar < 100:
+                    pass
+                else:
+                    self.ult = True
+                    self.ult_bar = 0
 
             elif pressed_keys[pygame.K_u]:
                 if self.special_dict['used'] == True:
@@ -328,7 +360,10 @@ class Knight:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(132, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (132, 128))
             self.screen.blit(name, (128, 28))
             stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
@@ -338,8 +373,11 @@ class Knight:
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(self.screenwidth-532, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (self.screenwidth - 532, 28))
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (self.screenwidth - 532, 128))
             stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
 
@@ -413,14 +451,50 @@ class Knight:
             else:
                 self.special_dict['ignore next'] = False
 
-
-
     def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
 
+        if self.ult == True:
 
-        if self.punch_dict['thrown'] == True and self.last_direction == "right":
+            self.punch_right_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                image_rect=pygame.Rect(0,0,128,128), animation_speed=4)
+            self.punch_right_animation.load_spritesheet(2.5, False)
+
+            self.punch_left_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+            self.punch_left_animation.load_spritesheet(2.5, True)
+            self.damage = 8
+            self.ult_bar = 0
+            if self.ult_counter <= 60:
+                self.charge.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+                self.blitz.draw(self.screen, self.xpos - 64, self.ypos - 332, self.frame_counter)
+                self.ult_counter += 1
+
+            elif self.ult_counter >= 180:
+                self.ult = False
+                self.ult_counter = 0
+                self.ignore = False
+
+            else:
+                self.ult_counter += 1
+
+        else:
+            if self.ignore == False:
+                self.punch_right_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
+                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+                self.punch_right_animation.load_spritesheet(2.5, False)
+                self.punch_left_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
+                                               image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
+                self.punch_left_animation.load_spritesheet(2.5, True)
+                self.damage = 2
+                self.ignore = True
+
+
+        if 0 < self.ult_counter <= 60:
+            pass
+
+        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
             self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":

@@ -712,6 +712,7 @@ class Screens:
                 text_rect = text.get_rect(center=(self.screenwidth/2, 300 +i ))
                 self.screen.blit(source=text, dest=text_rect)
 
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="black")
             self.screen.blit(source=zurueck_text, dest=zurueck_rect)
 
 
@@ -763,6 +764,7 @@ class Screens:
             pygame.draw.rect(surface=self.screen, rect=tipp_rect, color="black")
             self.screen.blit(tipp, tipp_rect)
 
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="black")
             self.screen.blit(source=zurueck, dest=zurueck_rect)
             self.screen.blit(source=ninja, dest = ninja_rect)
             self.screen.blit(source=knight, dest=knight_rect)
@@ -843,6 +845,7 @@ class Screens:
             pygame.draw.rect(surface=self.screen, rect=text2_rect, color="black")
             pygame.draw.rect(surface=self.screen, rect=text3_rect, color="black")
             pygame.draw.rect(surface=self.screen, rect=text4_rect, color="black")
+            pygame.draw.rect(surface=self.screen, rect=zurueck_rect, color="black")
 
             self.screen.blit(source=text, dest= text_rect)
             self.screen.blit(source=text2, dest = text2_rect)

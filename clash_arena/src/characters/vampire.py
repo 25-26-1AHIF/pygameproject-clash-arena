@@ -312,6 +312,17 @@ class Vampire:
                     self.frame_counter = 0
                     self.animation_playing = "jump"
 
+            elif pressed_keys[pygame.K_k]:
+                if self.bat.alive == True:
+                    pass
+                elif self.ult_bar < 100:
+                    pass
+                else:
+                    self.ult_bar = 0
+                    self.bat.alive = True
+                    self.bat.xpos = self.xpos
+                    self.bat.ypos = self.ypos - 50
+
             elif pressed_keys[pygame.K_u]:
                 if self.special_dict['used'] == True:
                     pass
