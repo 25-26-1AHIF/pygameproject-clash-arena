@@ -13,19 +13,22 @@ class Star:
         self.screenwidth = screenwidth
 
 
-    def update_and_draw(self, special_dict):
+    def update_and_draw(self, liste) -> bool | None:
 
         self.xpos += self.speed
 
         #pygame.draw.rect(surface=self.screen, rect=(self.xpos, self.ypos, self.size, self.size), color="yellow")
 
         if self.xpos <= 0 - self.size:
-            special_dict['list'].pop(0)
-            special_dict['used'] = False
+            liste.pop(0)
+            return True
 
         elif self.xpos >= self.screenwidth:
-            special_dict['list'].pop(0)
-            special_dict['used'] = False
+            liste.pop(0)
+            return True
+
+        else:
+            return False
 
     def get_rect(self):
         return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
@@ -76,6 +79,7 @@ class Ninja:
                                    'damage': 5,
                                    'ignore next': False}
         self.ult_bar = 0
+        self.ult_list = []
         self.name = ""
 
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
@@ -148,8 +152,10 @@ class Ninja:
 
         self.frame_counter = 0
 
+        self.ult_counter = 0
+
     def get_rect(self):
-        return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
+        return pygame.Rect(self.hit_rect.x, self.hit_rect.y, self.size, self.size)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -184,8 +190,6 @@ class Ninja:
                     if self.animation_playing != "walking left":
                         self.frame_counter = 0
                     self.animation_playing = "walking left"
-
-
 
             elif pressed_keys[pygame.K_d]:
                 if self.xpos >= self.screenwidth - self.size:
@@ -244,6 +248,30 @@ class Ninja:
                     self.special_sound_effect.play()
                     self.frame_counter = 0
                     self.special_dict['stars-left'] -= 1
+
+            elif pressed_keys[pygame.K_s]:
+
+                if self.ult_bar < 100:
+                    pass
+
+                elif self.blocking == True:
+                    pass
+
+                else:
+
+                    if self.last_direction == "right":
+                        new_star = Star(xpos = self.xpos + 16, ypos = self.ypos + self.size / 4 + 64, speed = 15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.ult_list.append(new_star)
+                        self.ult_bar = 0
+
+                    else:
+                        new_star = Star(xpos = self.xpos + self.size / 2 + 64, ypos = self.ypos + self.size / 4 + 64, speed = -15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.ult_list.append(new_star)
+                        self.ult_bar = 0
+
+
+                    self.special_sound_effect.play()
+                    self.frame_counter = 0
 
             else:
                 if self.animation_playing != "idle":
@@ -308,6 +336,30 @@ class Ninja:
                     self.frame_counter = 0
                     self.animation_playing = "jump"
 
+            elif pressed_keys[pygame.K_k]:
+
+                if self.ult_bar < 100:
+                    pass
+
+                elif self.blocking == True:
+                    pass
+
+                else:
+
+                    if self.last_direction == "right":
+                        new_star = Star(xpos = self.xpos + 16, ypos = self.ypos + self.size / 4 + 64, speed = 15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.ult_list.append(new_star)
+                        self.ult_bar = 0
+
+                    else:
+                        new_star = Star(xpos = self.xpos + self.size / 2 + 64, ypos = self.ypos + self.size / 4 + 64, speed = -15, screen = self.screen, size = 64, screenwidth=self.screenwidth)
+                        self.ult_list.append(new_star)
+                        self.ult_bar = 0
+
+
+                    self.special_sound_effect.play()
+                    self.frame_counter = 0
+
             elif pressed_keys[pygame.K_u]:
 
                 if self.special_dict['stars-left'] <= 0:
@@ -359,7 +411,8 @@ class Ninja:
     def special_attack(self):
         if self.special_dict['used'] == True:
             if len(self.special_dict['list']) >= 0:
-                self.special_dict['list'][0].update_and_draw(self.special_dict)
+                if self.special_dict['list'][0].update_and_draw(self.special_dict['list']) == True:
+                    self.special_dict['used'] = False
 
         else:
             pass
@@ -389,8 +442,11 @@ class Ninja:
 
         if self.player_type == 1:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(132, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (128, 28))
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (132, 128))
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark red")
 
@@ -400,8 +456,11 @@ class Ninja:
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
+            pygame.draw.rect(surface=self.screen, rect=(self.screenwidth-532, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (self.screenwidth - 532, 28))
+            ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
+            self.screen.blit(ult_text, (self.screenwidth - 532, 128))
             stars_text = self.SV.FONT_SMALL.render(f"Verbleibende Sterne: {self.special_dict['stars-left']}", True,
                                                     "dark red")
 
@@ -476,15 +535,33 @@ class Ninja:
             else:
                 self.special_dict['ignore next'] = False
 
-
     def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
         rect = self.get_rect()
 
+        if len(self.ult_list) > 0:
+            if self.last_direction == "left":
+                self.special_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+                self.star_left_animation.draw(self.screen, self.ult_list[0].xpos, self.ult_list[0].ypos,
+                                              self.frame_counter)
 
+            else:
+                self.special_right_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+                self.star_right_animation.draw(self.screen, self.ult_list[0].xpos, self.ult_list[0].ypos,
+                                               self.frame_counter)
 
-        if self.punch_dict['thrown'] == True and self.last_direction == "right":
+            self.ult_list[0].update_and_draw(self.ult_list)
+
+            if len(self.ult_list) > 0:
+                star_rect = pygame.Rect(self.ult_list[0].xpos, self.ult_list[0].ypos, self.ult_list[0].size,
+                                    self.ult_list[0].size)
+
+                if star_rect.colliderect(enemy.hit_rect):
+                    self.ult_counter += 1
+                    self.ult_list.pop(0)
+
+        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
             self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":
@@ -516,7 +593,6 @@ class Ninja:
         elif self.animation_playing == "walking left":
             self.walk_left_animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
 
-
         elif self.animation_playing == "idle" and self.last_direction == "right":
             self.idle_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
@@ -534,9 +610,18 @@ class Ninja:
 
             self.punch_dict['ypos'] = self.ypos + self.size / 4 + 64
 
+        if self.ult_counter > 0:
+
+            if self.ult_counter > 0 and self.ult_counter % 20 == 0:
+                enemy.hp -= 3
+
+            self.ult_counter += 1
+
+            if self.ult_counter >= 240:
+                self.ult_counter = 0
 
 
-            #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['width']), color="blue")
+        #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['width']), color="blue")
 
         self.draw_healthbar()
 
