@@ -1,6 +1,6 @@
 import pygame
-from clash_arena.src.screen_variables.screen_variables import ScreenVariables
-from clash_arena.src.sprite.sprite import Sprite
+from screen_variables.screen_variables import ScreenVariables
+from sprite.sprite import Sprite
 
 class Bat:
     def __init__(self, size, xpos, ypos, damage, speed, screen):

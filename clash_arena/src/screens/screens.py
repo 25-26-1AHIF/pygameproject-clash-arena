@@ -1,9 +1,9 @@
 import pygame
 import json
 
-from clash_arena.src.characters.knight import Knight
-from clash_arena.src.characters.ninja import Ninja
-from clash_arena.src.characters.vampire import Vampire
+from characters.knight import Knight
+from characters.ninja import Ninja
+from characters.vampire import Vampire
 
 def sort(liste) -> list:
     stoppen: bool = False
