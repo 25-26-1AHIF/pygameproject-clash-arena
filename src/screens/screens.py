@@ -1,9 +1,9 @@
 import pygame
 import json
 
-from characters.knight import Knight
-from characters.ninja import Ninja
-from characters.vampire import Vampire
+from src.characters.knight import Knight
+from src.characters.ninja import Ninja
+from src.characters.vampire import Vampire
 
 def sort(liste) -> list:
     stoppen: bool = False

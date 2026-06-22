@@ -1,66 +1,31 @@
 import pygame
-from screen_variables.screen_variables import ScreenVariables
-from sprite.sprite import Sprite
+from src.screen_variables.screen_variables import ScreenVariables
+from src.sprite.sprite import Sprite
 
-class Bat:
-    def __init__(self, size, xpos, ypos, damage, speed, screen):
-        self.size = size
-        self.xpos = xpos
-        self.ypos = ypos
-        self.damage = damage
-        self.speed = speed
-        self.screen = screen
-        self.animation = Sprite(filepath="assets/vampire/bat_spritesheet.png", image_count=5,
-                                image_rect=pygame.Rect(0, 0, size, size), animation_speed=8)
-        self.animation.load_spritesheet(1, False)
-        self.frame_counter = 0
-        self.alive = False
 
-    def update(self, enemy):
-
-        if self.alive == True:
-            if enemy.hit_rect.x > self.xpos:
-                self.xpos += self.speed
-
-            elif enemy.hit_rect.x < self.xpos:
-                self.xpos -= self.speed
-
-            if enemy.hit_rect.y > self.ypos:
-                self.ypos += self.speed
-
-            elif enemy.hit_rect.y < self.ypos:
-                self.ypos -= self.speed
-
-            self.animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
-
-            rect = pygame.Rect(self.xpos, self.ypos, self.size, self.size)
-
-            if rect.colliderect(enemy.hit_rect):
-                enemy.hp -= self.damage
-                self.alive = False
-
-            self.frame_counter += 1
-
-class Vampire:
+class Knight:
     def __init__(self, screen: pygame.Surface, screenwidth, screenheight, xpos, ypos, size, player_type, damage, fps, clock):
         self.screen = screen
         self.screenwidth = screenwidth
         self.screenheight = screenheight
 
         self.counter = 0
+        self.ignore = False
 
         self.punch_dict: dict = {"thrown" : False,
                             "range": 48,
                             "xpos" : 0,
-                            "ypos" : 0,
-                            "width" : 48}
+                            "ypos" : 0}
 
         self.player_type: int = player_type
 
         self.xpos: float = xpos
         self.ypos: float = ypos
-        self.size: float = size * 2
+        self.size: float = size * 2.5
         self.last_direction: str = ""
+
+        self.hit_rect = pygame.Rect(self.xpos + 128 / 2, self.ypos + 64, 128, 192)
+
 
         self.hp: int = 100
         self.damage: int = damage
@@ -77,85 +42,102 @@ class Vampire:
 
         self.pause: bool = False
 
-        self.hit_rect = pygame.Rect(self.xpos + 128 / 2, self.ypos + 64, 128, 192)
-
         self.fps = fps
         self.clock: pygame.time.Clock = clock
-        self.special_dict: dict = {'type': "Blood-Suck",
+        self.special_dict: dict = {'type': "Stab",
                                    'used': False,
                                    'list' : [],
-                                   'blood level': 0,
-                                   'damage': 10,
+                                   'durability': 8,
+                                   'damage': 8,
                                    'ignore next': False,
-                                   'counter' : 0,
-                                   'range' : 48,
                                    'xpos' : 0,
-                                   'ypos' : 0}
+                                   'ypos' : 0,
+                                   'range' : 48,
+                                   'counter' : 0}
 
-        self.name = ""
-        self.bat = Bat(15, self.xpos, self.ypos - 50, 10, 2, self.screen)
+        self.ult = False
+        self.ult_counter = 0
         self.ult_bar = 0
-
+        self.name = ""
 
         self.jump_sound = pygame.mixer.Sound("assets/jump_sound_effect.mp3")
-        self.punch_sound = pygame.mixer.Sound("assets/punch_sound.mp3")
+        self.punch_sound = pygame.mixer.Sound("assets/knight/knight_punch_sound_effect.mp3")
+        self.special_sound_effect = pygame.mixer.Sound("assets/knight/heavy_strike_sound_effect.mp3")
 
-        self.walk_right_animation = Sprite(filepath="assets/vampire/walk.png", image_count=6,
+
+        self.walk_right_animation = Sprite(filepath="assets/knight/walk.png", image_count=7,
                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.walk_right_animation.load_spritesheet(2, False)
+        self.walk_right_animation.load_spritesheet(2.5, False)
 
-        self.walk_left_animation = Sprite(filepath="assets/vampire/walk.png", image_count=6,
+        self.walk_left_animation = Sprite(filepath="assets/knight/walk.png", image_count=7,
                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.walk_left_animation.load_spritesheet(2, True)
+        self.walk_left_animation.load_spritesheet(2.5, True)
 
-        self.idle_right_animation = Sprite(filepath="assets/vampire/idle.png", image_count=5,
+
+        self.idle_right_animation = Sprite(filepath="assets/knight/idle.png", image_count=4,
                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.idle_right_animation.load_spritesheet(2, False)
+        self.idle_right_animation.load_spritesheet(2.5, False)
 
-        self.idle_left_animation = Sprite(filepath="assets/vampire/idle.png", image_count=5,
+        self.idle_left_animation = Sprite(filepath="assets/knight/idle.png", image_count=4,
                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.idle_left_animation.load_spritesheet(2, True)
+        self.idle_left_animation.load_spritesheet(2.5, True)
 
-        self.punch_right_animation = Sprite(filepath="assets/vampire/attack.png", image_count=5,
+
+        self.punch_right_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
                                             image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.punch_right_animation.load_spritesheet(2, False)
+        self.punch_right_animation.load_spritesheet(2.5, False)
 
-        self.punch_left_animation = Sprite(filepath="assets/vampire/attack.png", image_count=5,
+        self.punch_left_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.punch_left_animation.load_spritesheet(2, True)
+        self.punch_left_animation.load_spritesheet(2.5, True)
 
-        self.block_right_animation = Sprite(filepath="assets/vampire/block.png", image_count=2,
+
+        self.block_right_animation = Sprite(filepath="assets/knight/block.png", image_count=5,
                                             image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.block_right_animation.load_spritesheet(2, False)
+        self.block_right_animation.load_spritesheet(2.5, False)
 
-        self.block_left_animation = Sprite(filepath="assets/vampire/block.png", image_count=2,
+        self.block_left_animation = Sprite(filepath="assets/knight/block.png", image_count=5,
                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.block_left_animation.load_spritesheet(2, True)
+        self.block_left_animation.load_spritesheet(2.5, True)
 
-        self.jump_right_animation = Sprite(filepath="assets/vampire/jump.png", image_count=6,
+
+        self.jump_right_animation = Sprite(filepath="assets/knight/jump.png", image_count=6,
                                            image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.jump_right_animation.load_spritesheet(2, False)
+        self.jump_right_animation.load_spritesheet(2.5, False)
 
-        self.jump_left_animation = Sprite(filepath="assets/vampire/jump.png", image_count=6,
+        self.jump_left_animation = Sprite(filepath="assets/knight/jump.png", image_count=6,
                                           image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-        self.jump_left_animation.load_spritesheet(2, True)
+        self.jump_left_animation.load_spritesheet(2.5, True)
 
-        self.special_left_animation = Sprite(filepath="assets/vampire/special.png", image_count=4,
+
+        self.special_left_animation = Sprite(filepath="assets/knight/special.png", image_count=4,
                                              image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
-        self.special_left_animation.load_spritesheet(2, True)
+        self.special_left_animation.load_spritesheet(2.5, True)
 
-        self.special_right_animation = Sprite(filepath="assets/vampire/special.png", image_count=4,
+        self.special_right_animation = Sprite(filepath="assets/knight/special.png", image_count=4,
                                               image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
-        self.special_right_animation.load_spritesheet(2, False)
+        self.special_right_animation.load_spritesheet(2.5, False)
+
+        self.punch_right_fire_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                 image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.punch_right_fire_animation.load_spritesheet(2.5, False)
+
+        self.punch_left_fire_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.punch_left_fire_animation.load_spritesheet(2.5, True)
+
+        self.blitz = Sprite(filepath="assets/knight/blitz.png", image_count=5,
+                            image_rect=pygame.Rect(0, 0, 256, 512), animation_speed=8)
+        self.blitz.load_spritesheet(1, False)
+
+        self.charge = Sprite(filepath="assets/knight/attack_blitz_charge.png", image_count=5,
+                             image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=8)
+        self.charge.load_spritesheet(2.5, False)
 
         self.frame_counter = 0
 
-        self.hit_rect = pygame.Rect(self.xpos + 128 / 2, self.ypos + 64, 128, 192)
-
         self.animation_playing = ""
 
-    def get_rect(self):
-        return pygame.Rect(self.hit_rect.x, self.hit_rect.y, self.size, self.size)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -184,6 +166,7 @@ class Vampire:
                 elif self.blocking == True:
                     pass
                 else:
+
                     self.xpos -= 7
                     self.last_direction = "left"
 
@@ -214,6 +197,7 @@ class Vampire:
                     self.punch_sound.play()
                     self.frame_counter = 0
 
+
             elif pressed_keys[pygame.K_w]:
                 if self.jumping == True:
                     pass
@@ -225,32 +209,35 @@ class Vampire:
                     self.animation_playing = "jump"
 
             elif pressed_keys[pygame.K_s]:
-                if self.bat.alive == True:
+
+                if self.blocking == True:
                     pass
                 elif self.ult_bar < 100:
                     pass
                 else:
+                    self.ult = True
                     self.ult_bar = 0
-                    self.bat.alive = True
-                    self.bat.xpos = self.xpos
-                    self.bat.ypos = self.ypos - 50
 
             elif pressed_keys[pygame.K_q]:
                 if self.special_dict['used'] == True:
                     pass
-                elif self.special_dict['blood level'] >= 100:
+                elif self.special_dict['counter'] > 0:
                     pass
                 elif self.blocking == True:
                     pass
+                elif self.special_dict['durability'] <= 0:
+                    pass
                 else:
                     self.special_dict['used'] = True
+                    self.special_dict['durability'] -= 1
+                    self.special_sound_effect.play()
                     self.frame_counter = 0
+
 
             else:
                 if self.animation_playing != "idle":
                     self.frame_counter = 0
                 self.animation_playing = "idle"
-
 
         elif self.player_type == 2:
 
@@ -294,7 +281,6 @@ class Vampire:
                 else:
                     self.punch_dict['thrown'] = True
                     self.punch_sound.play()
-                    self.frame_counter = 0
 
             elif pressed_keys[pygame.K_i]:
                 if self.jumping == True:
@@ -303,29 +289,30 @@ class Vampire:
                 else:
                     self.jumping = True
                     self.jump_sound.play()
-                    self.frame_counter = 0
-                    self.animation_playing = "jump"
 
             elif pressed_keys[pygame.K_k]:
-                if self.bat.alive == True:
+
+                if self.blocking == True:
                     pass
                 elif self.ult_bar < 100:
                     pass
                 else:
+                    self.ult = True
                     self.ult_bar = 0
-                    self.bat.alive = True
-                    self.bat.xpos = self.xpos
-                    self.bat.ypos = self.ypos - 50
 
             elif pressed_keys[pygame.K_u]:
                 if self.special_dict['used'] == True:
                     pass
-                elif self.special_dict['blood level'] >= 100:
+                elif self.special_dict['counter'] > 0:
                     pass
                 elif self.blocking == True:
                     pass
+                elif self.special_dict['durability'] <= 0:
+                    pass
                 else:
                     self.special_dict['used'] = True
+                    self.special_dict['durability'] -= 1
+                    self.special_sound_effect.play()
                     self.frame_counter = 0
 
             else:
@@ -338,12 +325,11 @@ class Vampire:
         if self.punch_dict['thrown'] == True:
              self.counter += 1
 
-             if self.last_direction == "left":
-                 self.punch_dict['xpos'] = self.xpos + 16
-             else:
-                 self.punch_dict['xpos'] = self.xpos + self.size / 2 + 64
+             if self.last_direction == "right":
+                 self.punch_dict['xpos'] = self.xpos + self.size
 
-             self.punch_dict['ypos'] = self.ypos + self.size / 4 + 64
+             elif self.last_direction == "left":
+                 self.punch_dict['xpos'] = self.xpos - self.punch_dict['range']
 
         else:
             return
@@ -354,19 +340,18 @@ class Vampire:
 
     def special_attack(self):
         if self.special_dict['used'] == True:
-            self.special_dict['counter'] += 1
+             self.special_dict['counter'] += 1
 
-            if self.last_direction == "left":
-                self.special_dict['xpos'] = self.xpos + 16
-            else:
-                self.special_dict['xpos'] = self.xpos + self.size / 2 + 64
+             if self.last_direction == "right":
+                 self.special_dict['xpos'] = self.xpos + 128
 
-            self.special_dict['ypos'] = self.ypos + self.size / 4 + 64
+             elif self.last_direction == "left":
+                 self.special_dict['xpos'] = self.xpos + 128 + 16
 
         else:
             return
 
-        if self.special_dict['counter'] >= 15:
+        if self.special_dict['counter'] == 50:
             self.special_dict['counter'] = 0
             self.special_dict['used'] = False
 
@@ -378,7 +363,7 @@ class Vampire:
                 if self.blocking == False:
 
                     punch_rect = pygame.Rect(enemy.punch_dict['xpos'], enemy.punch_dict['ypos'], enemy.punch_dict['range'],enemy.punch_dict['range'])
-                #pygame.draw.rect(surface=self.screen, rect=self.hit_rect, color="white", width=1)
+                    #pygame.draw.rect(surface=self.screen, rect=self.hit_rect, color="white", width=1)
 
                     if punch_rect.colliderect(self.hit_rect):
                         self.hp -= enemy.damage
@@ -396,15 +381,14 @@ class Vampire:
             pygame.draw.rect(surface=self.screen, rect = (132, 32, bar_length, 48), color="red")
             pygame.draw.rect(surface=self.screen, rect=(132, 132, self.ult_bar * 4, 48), color="blue")
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
-            self.screen.blit(name, (128, 28))
             ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
             self.screen.blit(ult_text, (132, 128))
-            blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
+            self.screen.blit(name, (128, 28))
+            stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
+            stars_rect = stars_text.get_rect(center=(290, 100))
 
-            blood_rect = blood_text.get_rect(center=(290, 100))
-
-            self.screen.blit(source = blood_text, dest = blood_rect)
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
         elif self.player_type == 2:
             pygame.draw.rect(surface=self.screen, rect = (self.screenwidth - 532, 32, bar_length, 48), color="red")
@@ -412,13 +396,13 @@ class Vampire:
             name = self.SV.FONT_MIDDLE.render(f"{self.name}", True, "white")
             self.screen.blit(name, (self.screenwidth - 532, 28))
             ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
-            self.screen.blit(ult_text, (self.screenwidth-532, 128))
-            blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
+            self.screen.blit(ult_text, (self.screenwidth - 532, 128))
+            stars_text = self.SV.FONT_SMALL.render(f"Haltbarkeit des Schwertes: {self.special_dict['durability']}", True,
                                                     "dark red")
 
-            blood_rect = blood_text.get_rect(center=(self.screenwidth - 375, 100))
+            stars_rect = stars_text.get_rect(center=(self.screenwidth - 375, 100))
 
-            self.screen.blit(source = blood_text, dest = blood_rect)
+            self.screen.blit(source = stars_text, dest = stars_rect)
 
     def check_if_dead(self) -> bool:
         if self.hp <= 0:
@@ -451,7 +435,6 @@ class Vampire:
                     enemy.special_dict['used'] = False
 
         if enemy.special_dict['type'] == "Stab":
-
             if enemy.special_dict['used'] == True:
 
                 if self.special_dict['ignore next'] == False:
@@ -490,13 +473,44 @@ class Vampire:
     def update_and_draw(self, enemy) -> str|None:
         self.inputs()
         self.punch()
-        rect = self.get_rect()
 
-        if self.punch_dict['thrown'] == True and self.last_direction == "right":
-            self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+        if self.ult == True:
+
+            self.damage = 8
+            self.ult_bar = 0
+            if self.ult_counter <= 60:
+                self.charge.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+                self.blitz.draw(self.screen, self.xpos - 64, self.ypos - 332, self.frame_counter)
+                self.ult_counter += 1
+
+            elif self.ult_counter >= 180:
+                self.ult = False
+                self.ult_counter = 0
+                self.ignore = False
+
+            else:
+                self.ult_counter += 1
+
+        else:
+            if self.ignore == False:
+                self.damage = 2
+                self.ignore = True
+
+        if self.ult == True:
+            punch_right_animation = self.punch_right_fire_animation
+            punch_left_animation = self.punch_left_fire_animation
+        else:
+            punch_right_animation = self.punch_right_animation
+            punch_left_animation = self.punch_left_animation
+
+        if 0 < self.ult_counter <= 60:
+            pass
+
+        elif self.punch_dict['thrown'] == True and self.last_direction == "right":
+            punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":
-            self.punch_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+            punch_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.blocking == True and self.last_direction == "right":
             self.block_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
@@ -530,35 +544,43 @@ class Vampire:
 
         #pygame.draw.rect(surface=self.screen, rect=rect, color="red", width=1)
 
+
+        if self.last_direction == "right":
+            self.hit_rect = pygame.Rect(self.xpos, self.ypos + 128, 128, 192)
+
+        elif self.last_direction == "left":
+            self.hit_rect = pygame.Rect(self.xpos + 192, self.ypos + 128, 128, 192)
+
+
         if self.punch_dict['thrown'] == True:
             if self.last_direction == "left":
-                self.punch_dict['xpos'] = self.xpos + 16
+                self.punch_dict['xpos'] = self.xpos + 128 + 16
             else:
-                self.punch_dict['xpos'] = self.xpos + self.size / 2 + 64
+                self.punch_dict['xpos'] = self.xpos + 128
 
-            self.punch_dict['ypos'] = self.ypos + self.size / 4 + 64
+            self.punch_dict['ypos'] = self.ypos + self.size / 4 + 96
 
-            #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['width']), color="blue")
+            #pygame.draw.rect(surface=self.screen, rect=(self.punch_dict['xpos'], self.punch_dict['ypos'], self.punch_dict['range'], self.punch_dict['range']), color="blue")
+
 
         if self.special_dict['used'] == True:
             if self.last_direction == "left":
-                self.special_dict['xpos'] = self.xpos + 16
+                self.special_dict['xpos'] = self.xpos + 128 + 16
             else:
-                self.special_dict['xpos'] = self.xpos + self.size / 2 + 64
+                self.special_dict['xpos'] = self.xpos + 128
 
-            self.special_dict['ypos'] = self.ypos + self.size / 4 + 64
+            self.special_dict['ypos'] = self.ypos + self.size / 4 + 96
 
-            #pygame.draw.rect(surface=self.screen,
-                            #rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'],
-                                #self.special_dict['range']), color="green")
+
+            # pygame.draw.rect(surface=self.screen, rect=(self.special_dict['xpos'], self.special_dict['ypos'], self.special_dict['range'], self.special_dict['range']), color="green")
 
         self.draw_healthbar()
-        self.bat.update(enemy)
 
         if self.jumping == True:
             self.jump()
             self.jump_counter += 1
 
-        self.hit_rect = pygame.Rect(self.xpos + 128 / 2, self.ypos + 64, 128, 192)
+
+
         self.special_attack()
         self.frame_counter += 1

@@ -1,6 +1,6 @@
 import pygame
-from screen_variables.screen_variables import ScreenVariables
-from sprite.sprite import Sprite
+from src.screen_variables.screen_variables import ScreenVariables
+from src.sprite.sprite import Sprite
 
 class Star:
 
