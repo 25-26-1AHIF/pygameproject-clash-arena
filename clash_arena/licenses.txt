@@ -1,0 +1,53 @@
+clash_arena_menu.png: ChatGPT (prompt: (hier haben wir das file der planung eingefügt) mach mir zu diesem spiel ein passendes startmenü bild im format 1770x1000; mach nicht so viel anime und ohne buttons; mach bisschen mehr pixelart; wechsle arena und clash im titel so, dass clash arena dort steht)
+# wir brauchten für das menu mehrere prompts um es so zu haben, wie wir wollten
+
+steuerung_hintergrund.png: ChatGPT (prompt: erstelle ein bild des inneren der arena auf dem titelbild; ich meinte ein bild des inneren, wie ein raum in der arena, ähnlich einer waffenkammer oder so mäßig einer umkleide)
+# wir brauchten wieder mehrere prompts für das endgültige bild
+
+highscore_hintergrund.png: ChatGPT (prompt: (hier haben wir steuerung_hintergrund.png eingefügt) erstelle ein bild im selben stil wie dieses. Im bild ist jedoch kein ausgang zu sehen, und im fokus steht ein trophäenkasten in dem mehrere trophäen drinnen sind)
+
+play_map.png: ChatGPT (prompt: erstelle ein bild, als wäre man in der arena, welches man als hintergrund für den spielbildschirm benutzen kann)
+
+play_map2.png: ChatGPT (prompt: erstelle noch einen hintergrund für den spielbildschirm. Ein bild im selben stil wie der letzte spielbildschirm mit einer japanischen burg im hintergrund auf einem berg, an der rechten seite soll ein kirschblütenbaum stehen, und am boden sollen ein  paar kirschblüten liegen. Im bild ist es nacht; verändere das bild so, dass es im format 1668x943 ist. Verändere auch den boden zu eher einem erdboden und mache den boden kürzer)
+# brauchten wieder mehrere prompts
+
+play_map3.png: ChatGPT (prompt: prompt von Vampire map: Erstelle mir ein Bild, indem eine Dark Fantasy Kampfarena aus Pixel Art vor einem riesigen Dracula Schloss steht mit der Auflösung 1668 x 943)
+
+title_music.mp3: pixabay.com
+
+jump_sound_effect.mp3: pixabay.com
+
+punch_sound.mp3: pixabay.com
+
+knight/attack.png: craftpix.net
+knight/attack_blitz_charge.png: craftpix.net und Alexander
+knight/attack_feuer_mode.png: craftpix.net und Alexander
+knight/blitz.png: itch.io
+knight/block.png: craftpix.net
+knight/idle.png: craftpix.net
+knight/jump.png: craftpix.net
+knight/knight_select.png: craftpix.net
+knight/special.png: craftpix.net und Alexander
+knight/walk.png: craftpix.net
+knight/sword_for_special_attack_explanation.png: vectorstock.com
+knight/knight_punch_sound_effect.mp3: pixabay.com
+knight/heavy_strike_sound_effect.mp3: pixabay.com
+
+ninja/attack.png: craftpix.net
+ninja/block.png: craftpix.net
+ninja/idle.png: craftpix.net
+ninja/jump.png: craftpix.net
+ninja/ninja_select.png: craftpix.net
+ninja/walk.png: craftpix.net
+ninja/special.png: craftpix.net
+ninja/ninja_star_for_special_attack_explanation.png: Pinterest
+ninja/stern_ninja.png: itch.io
+ninja/ninja_star_sound_effect.mp3: pixabay
+
+vampire/attack.png: craftpix.net
+vampire/block.png: craftpix.net
+vampire/idle.png: craftpix.net
+vampire/jump.png: craftpix.net
+vampire/special.png: craftpix.net
+vampire/vampire_select.png: craftpix.net
+vampire/walk.png: craftpix.net

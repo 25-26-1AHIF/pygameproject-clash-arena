@@ -10,7 +10,6 @@ class Bat:
         self.damage = damage
         self.speed = speed
         self.screen = screen
-        self.counter = 0
         self.animation = Sprite(filepath="assets/vampire/bat_spritesheet.png", image_count=5,
                                 image_rect=pygame.Rect(0, 0, size, size), animation_speed=8)
         self.animation.load_spritesheet(1, False)
@@ -32,12 +31,7 @@ class Bat:
             elif enemy.hit_rect.y < self.ypos:
                 self.ypos -= self.speed
 
-            if self.counter >= 240:
-                self.counter = 0
-
-            else:
-                self.counter += 1
-                self.animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
+            self.animation.draw(self.screen, self.xpos, self.ypos, self.frame_counter)
 
             rect = pygame.Rect(self.xpos, self.ypos, self.size, self.size)
 
@@ -161,7 +155,7 @@ class Vampire:
         self.animation_playing = ""
 
     def get_rect(self):
-        return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
+        return pygame.Rect(self.hit_rect.x, self.hit_rect.y, self.size, self.size)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -419,7 +413,7 @@ class Vampire:
             self.screen.blit(name, (self.screenwidth - 532, 28))
             ult_text = self.SV.FONT_SMALL.render(f"ULT: {self.ult_bar}%", True, "white")
             self.screen.blit(ult_text, (self.screenwidth-532, 128))
-            blood_text = self.SV.FONT_SMALL.render(f"BLutlevel: {self.special_dict['blood level']}", True,
+            blood_text = self.SV.FONT_SMALL.render(f"Blutlevel: {self.special_dict['blood level']}", True,
                                                     "dark red")
 
             blood_rect = blood_text.get_rect(center=(self.screenwidth - 375, 100))

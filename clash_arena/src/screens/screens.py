@@ -200,41 +200,6 @@ class Screens:
         pygame.draw.rect(surface=self.screen, rect=highscore_rect, color="black")
         self.screen.blit(source=highscore_text, dest=highscore_rect)
 
-    def todo(self) -> str:
-
-        text = self.SV.FONT_BIG.render("Noch nicht fertig", True, "dark blue")
-        text_rect = text.get_rect(center=(self.screenwidth / 2, 50))
-
-        text2 = self.SV.FONT_BIG.render("Zurück zum Menü", True, "dark blue")
-        text2_rect = text.get_rect(center=(self.screenwidth / 2, self.screenheight / 2))
-
-        while True:
-
-            for event in pygame.event.get():
-
-                # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
-
-                if event.type == pygame.QUIT:
-                    return "beenden"
-
-                if event.type == pygame.KEYDOWN:
-
-                    if event.type == pygame.K_ESCAPE:
-                        return "beenden"
-
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    # klickposition = event.pos (x, y)
-                    if text2_rect.collidepoint(event.pos):
-                        print("Starten gedrückt")
-                        return "menü"
-
-            self.screen.fill("white")
-
-            self.screen.blit(source=text, dest=text_rect)
-            self.screen.blit(source=text2, dest=text2_rect)
-
-            pygame.display.flip()
-
     def steuerung(self):
 
         text = self.SV.FONT_BIG.render("Spieler 1", True, "dark red")
@@ -262,7 +227,7 @@ class Screens:
 
                 if event.type == pygame.KEYDOWN:
 
-                    if event.type == pygame.K_ESCAPE:
+                    if event.key == pygame.K_ESCAPE:
                         return "beenden"
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -440,7 +405,7 @@ class Screens:
                     pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
 
-                    pygame.display.update()
+                    pygame.display.flip()
 
 
         elif spieler == 2:
@@ -552,7 +517,6 @@ class Screens:
 
                     if text3_rect.collidepoint(event.pos):
 
-
                         try:
                             save_player_1: dict = {'player type' : player_1.player_type,
                                                 'hp' : player_1.hp,
@@ -580,9 +544,6 @@ class Screens:
                             print("Speichern fehlgeschlagen!")
                             self.error_message("Spiel konnte nicht gespeichert werden")
                             return "weiter"
-
-
-
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # klickposition = event.pos (x, y)
@@ -853,7 +814,6 @@ class Screens:
             self.screen.blit(source=text4, dest=text4_rect)
 
             self.screen.blit(source=zurueck, dest=zurueck_rect)
-
             self.screen.blit(image, (0, 300))
 
             pygame.display.flip()

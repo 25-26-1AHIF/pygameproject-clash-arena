@@ -56,41 +56,6 @@ def game_over_screen(clock, FPS, winner, screen):
 
         clock.tick(FPS)
 
-def menu(clock, FPS, screen):
-
-
-
-    running = True
-
-    while running:
-
-        # Jedes Ereignis (Event) durchgehen
-
-        for event in pygame.event.get():
-
-            # Das Spiel verlassen, falls der Benutzer das Fenster schließen möchte
-
-            if event.type == pygame.QUIT:
-                running = False
-
-            if event.type == pygame.K_ESCAPE:
-                while True:
-                    pass
-
-
-
-
-        screen.fill("black")
-
-
-        # Das Display updaten
-
-        pygame.display.flip()
-
-        # FPS überwachen
-
-        clock.tick(FPS)
-
 def main(screens, screen, SV, clock, FPS):
     next_screen: str = ""
 

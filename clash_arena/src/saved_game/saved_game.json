@@ -2,8 +2,23 @@
   {
     "player type": 1,
     "hp": 100,
-    "xpos": 343,
-    "ypos": 587,
+    "xpos": 203,
+    "ypos": 523.0,
+    "special_dict": {
+      "type": "Ninja-Star",
+      "list": [],
+      "used": false,
+      "stars-left": 9,
+      "damage": 5,
+      "ignore next": false
+    },
+    "name": "test"
+  },
+  {
+    "player type": 2,
+    "hp": 95,
+    "xpos": 1194.0,
+    "ypos": 523.0,
     "special_dict": {
       "type": "Stab",
       "used": false,
@@ -16,22 +31,7 @@
       "range": 48,
       "counter": 0
     },
-    "name": "Nevio"
+    "name": "test2"
   },
-  {
-    "player type": 2,
-    "hp": 100,
-    "xpos": 1083,
-    "ypos": 587,
-    "special_dict": {
-      "type": "Ninja-Star",
-      "list": [],
-      "used": false,
-      "stars-left": 10,
-      "damage": 5,
-      "ignore next": false
-    },
-    "name": "Nigger"
-  },
-  "assets/play_map2.png"
+  "assets/play_map.png"
 ]

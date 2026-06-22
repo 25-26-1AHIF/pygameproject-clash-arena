@@ -118,6 +118,14 @@ class Knight:
                                               image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
         self.special_right_animation.load_spritesheet(2.5, False)
 
+        self.punch_right_fire_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                 image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.punch_right_fire_animation.load_spritesheet(2.5, False)
+
+        self.punch_left_fire_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
+                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
+        self.punch_left_fire_animation.load_spritesheet(2.5, True)
+
         self.blitz = Sprite(filepath="assets/knight/blitz.png", image_count=5,
                             image_rect=pygame.Rect(0, 0, 256, 512), animation_speed=8)
         self.blitz.load_spritesheet(1, False)
@@ -130,8 +138,6 @@ class Knight:
 
         self.animation_playing = ""
 
-    def get_rect(self):
-        return pygame.Rect(self.xpos, self.ypos, self.size, self.size)
 
     def change_x_pos(self):
         if self.player_type == 2:
@@ -157,7 +163,10 @@ class Knight:
             if pressed_keys[pygame.K_a]:
                 if self.xpos <= 0:
                     pass
+                elif self.blocking == True:
+                    pass
                 else:
+
                     self.xpos -= 7
                     self.last_direction = "left"
 
@@ -167,6 +176,8 @@ class Knight:
 
             elif pressed_keys[pygame.K_d]:
                 if self.xpos >= self.screenwidth - self.size:
+                    pass
+                elif self.blocking == True:
                     pass
                 else:
                     self.xpos += 7
@@ -178,6 +189,8 @@ class Knight:
 
             elif pressed_keys[pygame.K_e]:
                 if self.counter > 0:
+                    pass
+                elif self.blocking == True:
                     pass
                 else:
                     self.punch_dict['thrown'] = True
@@ -237,6 +250,8 @@ class Knight:
             if pressed_keys[pygame.K_j]:
                 if self.xpos <= 0:
                     pass
+                elif self.blocking == True:
+                    pass
                 else:
                     self.xpos -= 7
                     self.last_direction = "left"
@@ -248,6 +263,8 @@ class Knight:
             elif pressed_keys[pygame.K_l]:
                 if self.xpos >= self.screenwidth - self.size:
                     pass
+                elif self.blocking == True:
+                    pass
                 else:
                     self.xpos += 7
                     self.last_direction = "right"
@@ -258,6 +275,8 @@ class Knight:
 
             elif pressed_keys[pygame.K_o]:
                 if self.counter > 0:
+                    pass
+                elif self.blocking == True:
                     pass
                 else:
                     self.punch_dict['thrown'] = True
@@ -457,13 +476,6 @@ class Knight:
 
         if self.ult == True:
 
-            self.punch_right_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
-                                                image_rect=pygame.Rect(0,0,128,128), animation_speed=4)
-            self.punch_right_animation.load_spritesheet(2.5, False)
-
-            self.punch_left_animation = Sprite(filepath="assets/knight/attack_feuer_mode.png", image_count=5,
-                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=4)
-            self.punch_left_animation.load_spritesheet(2.5, True)
             self.damage = 8
             self.ult_bar = 0
             if self.ult_counter <= 60:
@@ -481,24 +493,24 @@ class Knight:
 
         else:
             if self.ignore == False:
-                self.punch_right_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
-                                                image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-                self.punch_right_animation.load_spritesheet(2.5, False)
-                self.punch_left_animation = Sprite(filepath="assets/knight/attack.png", image_count=5,
-                                               image_rect=pygame.Rect(0, 0, 128, 128), animation_speed=6)
-                self.punch_left_animation.load_spritesheet(2.5, True)
                 self.damage = 2
                 self.ignore = True
 
+        if self.ult == True:
+            punch_right_animation = self.punch_right_fire_animation
+            punch_left_animation = self.punch_left_fire_animation
+        else:
+            punch_right_animation = self.punch_right_animation
+            punch_left_animation = self.punch_left_animation
 
         if 0 < self.ult_counter <= 60:
             pass
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "right":
-            self.punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+            punch_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.punch_dict['thrown'] == True and self.last_direction == "left":
-            self.punch_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
+            punch_left_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
 
         elif self.blocking == True and self.last_direction == "right":
             self.block_right_animation.draw(self.screen, self.xpos, self.ypos, frame_counter=self.frame_counter)
