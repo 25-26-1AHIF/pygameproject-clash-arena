@@ -357,8 +357,11 @@ class Screens:
             blocken_text = self.SV.FONT_MIDDLE.render("F -> Blocken", True, "dark red")
             blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 650))
 
+            ult_text = self.SV.FONT_MIDDLE.render("S -> ULT", True, "dark red")
+            ult_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 750))
+
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
-            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 750))
+            zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 850))
 
             hintergrund = pygame.image.load("assets/steuerung_hintergrund.png").convert()
 
@@ -401,6 +404,9 @@ class Screens:
 
                     pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="black")
                     self.screen.blit(source=blocken_text, dest=blocken_text_rect)
+
+                    pygame.draw.rect(surface=self.screen, rect=ult_text_rect, color="black")
+                    self.screen.blit(source=ult_text, dest=ult_text_rect)
 
                     pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
@@ -427,6 +433,9 @@ class Screens:
             blocken_text = self.SV.FONT_MIDDLE.render("M -> Blocken", True, "dark red")
             blocken_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 650))
 
+            ult_text = self.SV.FONT_MIDDLE.render("K -> ULT", True, "dark red")
+            ult_text_rect = blocken_text.get_rect(center=(self.screenwidth / 2, 750))
+
             zurueck_text = self.SV.FONT_MIDDLE.render("Zurück", True, "dark red")
             zurueck_text_rect = zurueck_text.get_rect(center=(self.screenwidth / 2, 750))
 
@@ -472,6 +481,9 @@ class Screens:
 
                     pygame.draw.rect(surface=self.screen, rect=blocken_text_rect, color="black")
                     self.screen.blit(source=blocken_text, dest=blocken_text_rect)
+
+                    pygame.draw.rect(surface=self.screen, rect=ult_text_rect, color="black")
+                    self.screen.blit(source=ult_text, dest=ult_text_rect)
 
                     pygame.draw.rect(surface=self.screen, rect=zurueck_text_rect, color="black")
                     self.screen.blit(source=zurueck_text, dest=zurueck_text_rect)
